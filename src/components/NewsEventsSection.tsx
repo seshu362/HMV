@@ -1,44 +1,161 @@
 import { useState } from 'react'
 import { ArrowLeft, ArrowRight, Clock, MapPin, ChevronRight, Sparkles } from 'lucide-react'
 
+// Authentic Hindi Mahavidyalaya News & Events imagery
+import republicDayImg from '../assets/NEWS AND EVENTS/76TH REPUBLIC DAY 2025.jpg'
+import hindiDiwasImg from '../assets/NEWS AND EVENTS/Celebration of Hindi Diwas.jpg'
+import convocationImg from '../assets/NEWS AND EVENTS/Convocation Day on 15 Feb 2017.jpg'
+import ganeshChaturthiImg from '../assets/NEWS AND EVENTS/Ganesh Chaturthi celebrations in college.jpg'
+import annualFunctionImg from '../assets/NEWS AND EVENTS/Grand Celebration of Annual Function 2025 in Hindi Mahavidyalaya.jpg'
+import womensDay2018Img from "../assets/NEWS AND EVENTS/INTERNATIONAL WOMEN'S DAY 2018.jpg"
+import womensDay2025Img from "../assets/NEWS AND EVENTS/International Women's Day 2025 Celebrated in Hindi Mahavidyalaya College.jpg"
+import scienceDayImg from '../assets/NEWS AND EVENTS/NATIONAL SCIENCE DAY 2025.jpg'
+import swachhBharatImg from '../assets/NEWS AND EVENTS/swachh Bharat NCC.jpg'
+import teachersDayImg from '../assets/NEWS AND EVENTS/Teachers day celebrations 2025.jpg'
+import telanganaDayImg from '../assets/NEWS AND EVENTS/Telangana Formation Day Flag Hosting.jpg'
+
 const eventsData = [
   {
     id: 1,
-    tag: 'EVENTS',
+    tag: 'ANNUAL DAY',
     month: 'MARCH',
-    day: '28',
-    title: 'INVITATION FOR ANNUAL DAY CELEBRATIONS 2024',
-    time: '4 PM Onwards',
-    venue: 'Hindi Mahavidyalaya, Nallakunta, Hyderabad, 500044',
+    day: '22',
+    title: 'Grand Celebration of Annual Function 2025 in Hindi Mahavidyalaya',
+    time: '4:00 PM Onwards',
+    venue: 'Main Auditorium, Hindi Mahavidyalaya, Nallakunta, Hyderabad',
     description:
-      'Join us in celebrating six decades of academic excellence, student accomplishments, cultural performances, and the annual awards ceremony.',
-    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=85',
+      'Celebration of academic milestones, vibrant cultural performances, theatrical dramas, and annual collegiate award distributions.',
+    image: annualFunctionImg,
     dotColor: '#ea580c',
   },
   {
     id: 2,
-    tag: 'SEMINAR',
-    month: 'APRIL',
-    day: '15',
-    title: 'NATIONAL SEMINAR ON CONTEMPORARY HINDI LITERATURE',
-    time: '10 AM to 5 PM',
-    venue: 'Auditorium, Hindi Mahavidyalaya Campus, Hyderabad',
+    tag: 'REPUBLIC DAY',
+    month: 'JANUARY',
+    day: '26',
+    title: '76th Republic Day Celebrations 2025',
+    time: '8:30 AM Onwards',
+    venue: 'Main Campus Grounds, Hindi Mahavidyalaya',
     description:
-      'Eminent scholars, authors, and researchers from across India gather for keynote sessions on modern linguistic trends, translation, and pedagogy.',
-    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=85',
+      'Unfurling of the National Tricolour, NCC guard of honour, inspiring patriotic addresses, and ceremonial parade honouring the 76th Republic Day.',
+    image: republicDayImg,
     dotColor: '#1e1b4b',
   },
   {
     id: 3,
-    tag: 'PLACEMENT',
-    month: 'MAY',
-    day: '02',
-    title: 'ANNUAL MEGA CAMPUS RECRUITMENT DRIVE 2024',
-    time: '9 AM Onwards',
-    venue: 'Placement Cell & Seminar Hall, Main Block',
+    tag: 'SCIENCE EXPO',
+    month: 'FEBRUARY',
+    day: '28',
+    title: 'National Science Day 2025',
+    time: '9:30 AM to 4:30 PM',
+    venue: 'Science Laboratories & Exhibition Hall, HMV Campus',
     description:
-      'Over 35 leading corporations and multinational companies recruiting final year undergraduate and postgraduate students across all disciplines.',
-    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85',
+      'Interactive science exhibitions, working research prototypes, student scientific paper presentations, and inter-collegiate quiz competitions.',
+    image: scienceDayImg,
+    dotColor: '#2e1065',
+  },
+  {
+    id: 4,
+    tag: "WOMEN'S DAY",
+    month: 'MARCH',
+    day: '08',
+    title: "International Women's Day 2025 Celebrated in Hindi Mahavidyalaya College",
+    time: '10:00 AM to 2:00 PM',
+    venue: 'Central Seminar Hall, Hindi Mahavidyalaya',
+    description:
+      'Commemorating women empowerment with keynote speeches from women leaders, student symposiums, and special felicitations of distinguished achievers.',
+    image: womensDay2025Img,
+    dotColor: '#ea580c',
+  },
+  {
+    id: 5,
+    tag: 'HINDI DIWAS',
+    month: 'SEPTEMBER',
+    day: '14',
+    title: 'Celebration of Hindi Diwas',
+    time: '10:00 AM to 4:00 PM',
+    venue: 'Central Auditorium, Hindi Mahavidyalaya',
+    description:
+      'National Hindi Diwas commemoration with literary symposia, debate championships, kavi sammelan, and celebration of linguistic heritage.',
+    image: hindiDiwasImg,
+    dotColor: '#1e1b4b',
+  },
+  {
+    id: 6,
+    tag: "TEACHERS' DAY",
+    month: 'SEPTEMBER',
+    day: '05',
+    title: 'Teachers Day Celebrations 2025',
+    time: '11:00 AM Onwards',
+    venue: 'College Auditorium, Hindi Mahavidyalaya',
+    description:
+      'Heartfelt tribute to revered educators and mentors featuring student cultural performances, traditional guru vandana, and faculty felicitations.',
+    image: teachersDayImg,
+    dotColor: '#ea580c',
+  },
+  {
+    id: 7,
+    tag: 'CONVOCATION',
+    month: 'FEBRUARY',
+    day: '15',
+    title: 'Convocation Day on 15 Feb 2017',
+    time: '10:30 AM Onwards',
+    venue: 'Auditorium & Convocation Hall, Hindi Mahavidyalaya',
+    description:
+      'Conferring graduation degrees, university medals, and academic honours to undergraduate and postgraduate batches by university leaders.',
+    image: convocationImg,
+    dotColor: '#1e1b4b',
+  },
+  {
+    id: 8,
+    tag: 'NCC OUTREACH',
+    month: 'OCTOBER',
+    day: '02',
+    title: 'Swachh Bharat NCC Campaign',
+    time: '7:30 AM to 11:30 AM',
+    venue: 'Nallakunta & Surrounding Hyderabad Community',
+    description:
+      'Civic cleanliness drive, public sanitation awareness rally, and social service movement spearheaded by the college NCC and NSS units.',
+    image: swachhBharatImg,
+    dotColor: '#2e1065',
+  },
+  {
+    id: 9,
+    tag: 'FESTIVAL',
+    month: 'SEPTEMBER',
+    day: '07',
+    title: 'Ganesh Chaturthi Celebrations in College',
+    time: '9:30 AM Onwards',
+    venue: 'College Campus, Hindi Mahavidyalaya',
+    description:
+      'Traditional festive puja, devotional cultural prayers, eco-friendly idol installation, and festive community celebrations by students and staff.',
+    image: ganeshChaturthiImg,
+    dotColor: '#ea580c',
+  },
+  {
+    id: 10,
+    tag: 'STATE DAY',
+    month: 'JUNE',
+    day: '02',
+    title: 'Telangana Formation Day Flag Hosting',
+    time: '9:00 AM Onwards',
+    venue: 'Administrative Block Plaza, Hindi Mahavidyalaya',
+    description:
+      'Ceremonial state flag unfurling, rendition of state songs, and celebrations honoring the rich cultural heritage and progress of Telangana.',
+    image: telanganaDayImg,
+    dotColor: '#1e1b4b',
+  },
+  {
+    id: 11,
+    tag: "WOMEN'S DAY",
+    month: 'MARCH',
+    day: '08',
+    title: "INTERNATIONAL WOMEN'S DAY 2018",
+    time: '11:00 AM to 3:00 PM',
+    venue: 'Seminar Hall, Hindi Mahavidyalaya',
+    description:
+      'Honouring women faculties, inspiring talks on women in leadership, and student presentations on gender equality and societal development.',
+    image: womensDay2018Img,
     dotColor: '#2e1065',
   },
 ]
@@ -132,26 +249,32 @@ export default function NewsEventsSection() {
                 const position = (idx - activeIdx + eventsData.length) % eventsData.length
                 const isFront = position === 0
                 const isSecond = position === 1
+                const isThird = position === 2
+                const isHidden = position > 2
 
                 return (
                   <article
                     key={event.id}
                     onClick={() => {
-                      if (!isFront) setActiveIdx(idx)
+                      if (!isFront && !isHidden) setActiveIdx(idx)
                     }}
                     style={
                       {
-                        zIndex: isFront ? 30 : isSecond ? 20 : 10,
+                        zIndex: isFront ? 30 : isSecond ? 20 : isThird ? 10 : 0,
                         transform: isFront
                           ? 'translateY(0px) scale(1)'
                           : isSecond
                           ? 'translateY(-2.5rem) scale(0.95)'
-                          : 'translateY(-4.8rem) scale(0.90)',
-                        opacity: isFront ? 1 : isSecond ? 0.85 : 0.65,
+                          : isThird
+                          ? 'translateY(-4.8rem) scale(0.90)'
+                          : 'translateY(-5.5rem) scale(0.85)',
+                        opacity: isFront ? 1 : isSecond ? 0.85 : isThird ? 0.65 : 0,
+                        pointerEvents: isHidden ? 'none' : 'auto',
+                        visibility: isHidden ? 'hidden' : 'visible',
                       } as React.CSSProperties
                     }
                     className={`event-stacked-card absolute inset-x-0 top-6 sm:top-8 bg-white rounded-2xl sm:rounded-3xl shadow-2xl shadow-slate-900/15 border border-slate-200/80 overflow-hidden transition-all duration-500 ease-in-out select-none ${
-                      isFront ? 'cursor-default' : 'cursor-pointer hover:opacity-95'
+                      isFront ? 'cursor-default' : isHidden ? 'pointer-events-none' : 'cursor-pointer hover:opacity-95'
                     }`}
                   >
                     {/* Card Header matching snippet with Close/Next label &#10539; */}
@@ -246,7 +369,7 @@ export default function NewsEventsSection() {
             </div>
 
             {/* Step Indicators */}
-            <div className="flex items-center justify-center gap-2 mt-6">
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-6 max-w-xs sm:max-w-md mx-auto">
               {eventsData.map((_, i) => (
                 <button
                   key={i}
