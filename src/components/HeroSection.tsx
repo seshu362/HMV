@@ -31,6 +31,7 @@ const slides = [
     tagline: 'Distinguished academic leadership, Chancellor procession and NCC Guard of Honour upholding traditions of excellence.',
     image: banner2,
     alt: 'Convocation Academic Procession with NCC Cadets and University Dignitaries',
+    objectPosition: 'center top',
   },
   {
     id: 3,
@@ -229,7 +230,11 @@ export default function HeroSection() {
               src={slide.image}
               alt={slide.alt}
               className="w-full h-full object-cover select-none"
-              style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
+              style={{
+                objectPosition: (slide as any).objectPosition || 'center center',
+                transform: 'translateZ(0)',
+                backfaceVisibility: 'hidden'
+              }}
             />
 
             {/* Vignette Gradients */}
