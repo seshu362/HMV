@@ -86,9 +86,22 @@ export default function AchievementsSection() {
   const ringRef = useRef<HTMLDivElement>(null)
   const angleRef = useRef(0)
   const isDraggingRef = useRef(false)
+  const isDragEngagedRef = useRef(false)
   const startXRef = useRef(0)
+  const startYRef = useRef(0)
   const startAngleRef = useRef(0)
-  const hasMovedRef = useRef(false)
+  const cardPointerDownRef = useRef({ x: 0, y: 0, time: 0 })
+
+  // Escape key closes spotlight card
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveModalItem(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   // 60FPS Continuous Animation loop with interactive drag override
   useEffect(() => {
@@ -111,40 +124,57 @@ export default function AchievementsSection() {
   // Pointer Drag-to-Rotate handlers (Mouse & Touch)
   const handlePointerDown = (e: React.PointerEvent) => {
     isDraggingRef.current = true
-    setIsDragging(true)
+    isDragEngagedRef.current = false
     startXRef.current = e.clientX
+    startYRef.current = e.clientY
     startAngleRef.current = angleRef.current
-    hasMovedRef.current = false
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId)
-    } catch { }
   }
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDraggingRef.current) return
     const dx = e.clientX - startXRef.current
-    if (Math.abs(dx) > 4) {
-      hasMovedRef.current = true
-    }
-    // Smooth 0.42 sensitivity for natural turntable feel
-    angleRef.current = startAngleRef.current + dx * 0.42
-    if (ringRef.current) {
-      ringRef.current.style.transform = `rotateX(10deg) translateY(32px) rotateY(${angleRef.current}deg)`
+    const dy = e.clientY - startYRef.current
+
+    // Only engage dragging if pointer moved > 8px
+    if (Math.hypot(dx, dy) > 8) {
+      if (!isDragEngagedRef.current) {
+        isDragEngagedRef.current = true
+        setIsDragging(true)
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId)
+        } catch { }
+      }
+      angleRef.current = startAngleRef.current + dx * 0.42
+      if (ringRef.current) {
+        ringRef.current.style.transform = `rotateX(10deg) translateY(32px) rotateY(${angleRef.current}deg)`
+      }
     }
   }
 
   const handlePointerUp = (e: React.PointerEvent) => {
     isDraggingRef.current = false
     setIsDragging(false)
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch { }
+    if (isDragEngagedRef.current) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId)
+      } catch { }
+    }
   }
 
-  const handleCardClick = (item: AchievementCard) => {
-    // Only open modal if user clicked without dragging
-    if (!hasMovedRef.current) {
-      setActiveModalItem(item)
+  const openCardSpotlight = (item: AchievementCard, idx: number) => {
+    setActiveModalItem(item)
+
+    // Smoothly turn the ring to bring the chosen card front and center
+    const targetAngle = -(idx + 1) * 45
+    angleRef.current = targetAngle
+    if (ringRef.current) {
+      ringRef.current.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)'
+      ringRef.current.style.transform = `rotateX(10deg) translateY(32px) rotateY(${targetAngle}deg)`
+      setTimeout(() => {
+        if (ringRef.current) {
+          ringRef.current.style.transition = ''
+        }
+      }, 700)
     }
   }
 
@@ -211,7 +241,25 @@ export default function AchievementsSection() {
               <div
                 key={item.id}
                 className={`carousel-card c${cardNum}`}
-                onClick={() => handleCardClick(item)}
+                onPointerDown={(e) => {
+                  cardPointerDownRef.current = { x: e.clientX, y: e.clientY, time: Date.now() }
+                }}
+                onPointerUp={(e) => {
+                  const dx = Math.abs(e.clientX - cardPointerDownRef.current.x)
+                  const dy = Math.abs(e.clientY - cardPointerDownRef.current.y)
+                  const dt = Date.now() - cardPointerDownRef.current.time
+                  if (dx < 12 && dy < 12 && dt < 600) {
+                    openCardSpotlight(item, idx)
+                  }
+                }}
+                onClick={() => {
+                  if (!isDragEngagedRef.current) {
+                    openCardSpotlight(item, idx)
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`View details of ${item.title}`}
               >
                 {/* 
                   FRONT OF CARD:
@@ -276,20 +324,27 @@ export default function AchievementsSection() {
         </div>
       </div>
 
+      {/* ================= 3. Interactive Navigation & Instruction Tip ================= */}
+      <p className="text-slate-400 text-[11px] sm:text-xs mt-3 flex items-center justify-center gap-1.5 pointer-events-none z-10">
+        <Sparkles className="w-3 h-3 text-[#ea580c]" />
+        <span>Click any card to bring it front &amp; read details · Drag to spin</span>
+      </p>
 
-
-      {/* ================= 4. Spotlight Modal: Comes Up & Shows Clearly ================= */}
+      {/* ================= 4. Spotlight Card: Comes Up to Front for Clear Reading ================= */}
       {activeModalItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-md animate-fadeIn"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/75 backdrop-blur-md animate-fadeIn"
           onClick={() => setActiveModalItem(null)}
         >
           <div
-            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-300 scale-100"
+            className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-300"
             onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: 'modalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
           >
             {/* Big Crisp Photo */}
-            <div className="relative w-full h-[250px] sm:h-[300px] overflow-hidden bg-slate-100">
+            <div className="relative w-full h-[260px] sm:h-[320px] overflow-hidden bg-slate-100">
               <img
                 src={activeModalItem.image}
                 alt={activeModalItem.title}
@@ -301,33 +356,36 @@ export default function AchievementsSection() {
                 type="button"
                 onClick={() => setActiveModalItem(null)}
                 aria-label="Close details"
-                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-105 cursor-pointer shadow-md"
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-lg"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
 
               {/* Floating Pill Tag */}
-              <div className="absolute bottom-4 left-4 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-xs font-bold text-[#ea580c] shadow-md flex items-center gap-1.5 border border-white/60">
+              <div className="absolute bottom-4 left-4 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-xs font-bold text-[#ea580c] shadow-lg flex items-center gap-1.5 border border-white/60">
                 <Sparkles className="w-3.5 h-3.5 text-[#f95721]" />
                 <span>{activeModalItem.subtitle}</span>
               </div>
             </div>
 
-            {/* Content Details */}
-            <div className="p-6 sm:p-8 space-y-3.5">
-              <h3 className="text-xl sm:text-2xl font-bold text-[#1e1b4b] leading-snug">
+            {/* Content Details: High Legibility */}
+            <div className="p-6 sm:p-8 space-y-4">
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1e1b4b] leading-snug">
                 {activeModalItem.title}
               </h3>
 
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-600 text-base sm:text-lg leading-relaxed font-normal">
                 {activeModalItem.description}
               </p>
 
-              <div className="pt-2 flex justify-end">
+              <div className="pt-3 flex items-center justify-between border-t border-slate-100">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Hindi Mahavidyalaya · Honours &amp; Achievements
+                </span>
                 <button
                   type="button"
                   onClick={() => setActiveModalItem(null)}
-                  className="px-5 py-2 rounded-xl bg-[#1e1b4b] hover:bg-[#2d296c] text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer shadow-xs"
+                  className="px-6 py-2.5 rounded-xl bg-[#1e1b4b] hover:bg-[#ea580c] text-white text-sm font-semibold transition-all duration-200 cursor-pointer shadow-sm hover:scale-105"
                 >
                   Close
                 </button>
@@ -531,6 +589,22 @@ export default function AchievementsSection() {
           .carousel-ring {
             scale: 0.60;
           }
+        }
+
+        @keyframes modalPop {
+          0% {
+            opacity: 0;
+            transform: scale(0.85) translateY(20px);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
       `}</style>
     </section>

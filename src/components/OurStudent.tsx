@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import './OurStudent.css'
+import studentGirl1 from '@/assets/Students/magnific_inidan-student_6AF8HQpiJO.png'
+import studentBoy1 from '@/assets/Students/magnific_inidan-student_jUdzXehLD0.png'
+import studentGirl2 from '@/assets/Students/premium_photo-1661481422770-29567015ece6.avif'
 
 const triggers: ('two' | 'three' | 'four')[] = ['two', 'three', 'four']
 
@@ -179,7 +182,7 @@ export default function OurStudent() {
               <div className="pages_page__inner" />
             </div>
 
-            {/* PAGE 3: SPREAD 2-3 (LEFT - CRAIG BOTOSH) */}
+            {/* PAGE 3: SPREAD 2-3 (LEFT - ANANYA SHARMA) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="logo">Student Experience</div>
@@ -187,7 +190,7 @@ export default function OurStudent() {
                 <div className="content">
                   <div className="content_offset">
                     <div className="student-stars">★★★★★</div>
-                    <h2>Craig Botosh</h2>
+                    <h2>Ananya Sharma</h2>
                     <p>
                       BATCH 20-23 · "Hindi Mahavidyalaya is a wonderful platform for exploring one's
                       quest for knowledge and development of business skills."
@@ -233,7 +236,7 @@ export default function OurStudent() {
               </div>
             </div>
 
-            {/* PAGE 4: SPREAD 2-3 (RIGHT - ANN MANGO) */}
+            {/* PAGE 4: SPREAD 2-3 (RIGHT - ANANYA SHARMA) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="hamburger">
@@ -256,15 +259,15 @@ export default function OurStudent() {
                       </span>
                       <span>Taking admission to Hindi Mahavidyalaya</span>
                       <span>was the best decision of my life.</span>
-                      <span className="name">Ann Mango</span>
+                      <span className="name">Ananya Sharma</span>
                       <span className="auth">- BATCH 20-23 · ★★★★★</span>
                       <span className="quo">"</span>
                     </h5>
                   </div>
                   <div className="content_picture">
                     <img
-                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=85"
-                      alt="Ann Mango - BATCH 20-23"
+                      src={studentGirl1}
+                      alt="Ananya Sharma - BATCH 20-23"
                     />
                   </div>
                   <h1 key={`right-${headingKey}`} className={animateHeading ? 'heading-animated-3d' : 'heading-hidden-3d'}>
@@ -301,7 +304,7 @@ export default function OurStudent() {
               </div>
             </div>
 
-            {/* PAGE 5: SPREAD 4-5 (LEFT - MARTIN CULHANE) */}
+            {/* PAGE 5: SPREAD 4-5 (LEFT - RAHUL VERMA) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="logo">Student Experience</div>
@@ -313,13 +316,13 @@ export default function OurStudent() {
                       "The faculty members are very good and supportive. I like the practical
                       orientation in teaching methodology."
                     </h4>
-                    <h6>Martin Culhane · BATCH 20-23</h6>
+                    <h6>Rahul Verma · BATCH 20-23</h6>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* PAGE 6: SPREAD 4-5 (RIGHT - MARTIN CULHANE SPREAD) */}
+            {/* PAGE 6: SPREAD 4-5 (RIGHT - RAHUL VERMA SPREAD) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="hamburger">
@@ -330,8 +333,8 @@ export default function OurStudent() {
                 <div className="bg" />
                 <div className="content_centerimage">
                   <img
-                    src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=85"
-                    alt="Martin Culhane - BATCH 20-23"
+                    src={studentBoy1}
+                    alt="Rahul Verma - BATCH 20-23"
                   />
                 </div>
                 <div className="content">
@@ -353,14 +356,14 @@ export default function OurStudent() {
               </div>
             </div>
 
-            {/* PAGE 7: SPREAD 6-7 (LEFT - PAITYN PHILIPS & SECTIONS) */}
+            {/* PAGE 7: SPREAD 6-7 (LEFT - KAVYA REDDY & SECTIONS) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="logo">Student Experience</div>
                 <div className="pagenumber">6 7</div>
                 <div className="content">
                   <div className="content_section">
-                    <h2>Paityn Philips</h2>
+                    <h2>Kavya Reddy</h2>
                     <p>
                       BATCH 20-23 · ★★★★★ · "I like the Club activities and events organized on a
                       regular basis. Of course, we get the opportunity to unleash our creative
@@ -396,15 +399,15 @@ export default function OurStudent() {
                 <div className="bg" />
                 <div className="content_centerimage">
                   <img
-                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=85"
-                    alt="Paityn Philips - BATCH 20-23"
+                    src={studentGirl2}
+                    alt="Kavya Reddy - BATCH 20-23"
                   />
                 </div>
                 <div className="content">
                   <div className="content_center right">
                     <div className="student-stars">★★★★★</div>
                     <h4>"Unleashing our creative instincts and management skills."</h4>
-                    <h6>Paityn Philips · BATCH 20-23</h6>
+                    <h6>Kavya Reddy · BATCH 20-23</h6>
                   </div>
                 </div>
                 <div className="footer">

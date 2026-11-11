@@ -912,6 +912,9 @@
 }
 .alumni-corner-wrapper .pages_page__inner .content_centerimage img {
   width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.45);
+  object-fit: cover;
 }
 .alumni-corner-wrapper .pages_page__inner .content_center {
   position: absolute;
@@ -974,6 +977,9 @@
   width: 100%;
   margin: 0;
   display: inline-block;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.45);
+  object-fit: cover;
 }
 .alumni-corner-wrapper .pages_page__inner .content_quote {
   position: absolute;

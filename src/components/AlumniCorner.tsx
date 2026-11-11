@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import './AlumniCorner.css'
+import alumniGirl1 from '@/assets/Students/magnific_inidan-student_6AF8HQpiJO.png'
+import alumniBoy1 from '@/assets/Students/magnific_inidan-student_jUdzXehLD0.png'
+import alumniGirl2 from '@/assets/Students/premium_photo-1661481422770-29567015ece6.avif'
 
 const triggers: ('two' | 'three' | 'four')[] = ['two', 'three', 'four']
 
@@ -193,7 +196,7 @@ export default function AlumniCorner() {
               <div className="pages_page__inner" />
             </div>
 
-            {/* PAGE 3: SPREAD 2-3 (LEFT - CRAIG BOTOSH) */}
+            {/* PAGE 3: SPREAD 2-3 (LEFT - ANANYA SHARMA) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="logo">Alumni Corner</div>
@@ -201,7 +204,7 @@ export default function AlumniCorner() {
                 <div className="content">
                   <div className="content_offset">
                     <div className="student-stars">★★★★★</div>
-                    <h2>Craig Botosh</h2>
+                    <h2>Ananya Sharma</h2>
                     <p>
                       BATCH 18–21 · Personal Shopper – Shoppers Stop · "As one of the top institutions
                       in Hyderabad, Telangana, Hindi Mahavidyalaya shaped me from day one to face the
@@ -246,7 +249,7 @@ export default function AlumniCorner() {
               </div>
             </div>
 
-            {/* PAGE 4: SPREAD 2-3 (RIGHT - ANN MANGO) */}
+            {/* PAGE 4: SPREAD 2-3 (RIGHT - ANANYA SHARMA) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="hamburger">
@@ -269,15 +272,15 @@ export default function AlumniCorner() {
                       </span>
                       <span>I feel proud that I was a student of Hindi Mahavidyalaya.</span>
                       <span>The institute gave me solid knowledge and professional ethics.</span>
-                      <span className="name">Ann Mango</span>
+                      <span className="name">Ananya Sharma</span>
                       <span className="auth">Regional Manager - Reliance Retail · BATCH 18–21 · ★★★★★</span>
                       <span className="quo">"</span>
                     </h5>
                   </div>
                   <div className="content_picture">
                     <img
-                      src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=85"
-                      alt="Ann Mango - BATCH 18-21"
+                      src={alumniGirl1}
+                      alt="Ananya Sharma - BATCH 18-21"
                     />
                   </div>
                   <h1
@@ -312,7 +315,7 @@ export default function AlumniCorner() {
               </div>
             </div>
 
-            {/* PAGE 5: SPREAD 4-5 (LEFT - MARTIN CULHANE) */}
+            {/* PAGE 5: SPREAD 4-5 (LEFT - RAHUL VERMA) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="logo">Alumni Corner</div>
@@ -325,13 +328,13 @@ export default function AlumniCorner() {
                       career of its students. From the time of inception, the team has a clear
                       mindset to give industries market-ready talent."
                     </h4>
-                    <h6>Martin Culhane · Sr. HR Manager – Capgemini (BATCH 18–21)</h6>
+                    <h6>Rahul Verma · Sr. HR Manager – Capgemini (BATCH 18–21)</h6>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* PAGE 6: SPREAD 4-5 (RIGHT - MARTIN CULHANE SPREAD) */}
+            {/* PAGE 6: SPREAD 4-5 (RIGHT - RAHUL VERMA SPREAD) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="hamburger">
@@ -342,8 +345,8 @@ export default function AlumniCorner() {
                 <div className="bg" />
                 <div className="content_centerimage">
                   <img
-                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=85"
-                    alt="Martin Culhane - BATCH 18-21"
+                    src={alumniBoy1}
+                    alt="Rahul Verma - BATCH 18-21"
                   />
                 </div>
                 <div className="content">
@@ -407,15 +410,15 @@ export default function AlumniCorner() {
                 <div className="bg" />
                 <div className="content_centerimage">
                   <img
-                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=85"
-                    alt="HMV Alumni Community"
+                    src={alumniGirl2}
+                    alt="Kavya Reddy - BATCH 18-21"
                   />
                 </div>
                 <div className="content">
                   <div className="content_center right">
                     <div className="student-stars">★★★★★</div>
                     <h4>"Lifelong connection, global leadership, and transformative alumni success."</h4>
-                    <h6>Hindi Mahavidyalaya Alumni Association</h6>
+                    <h6>Kavya Reddy · Hindi Mahavidyalaya Alumni Association</h6>
                   </div>
                 </div>
                 <div className="footer">
