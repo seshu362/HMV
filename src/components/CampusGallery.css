@@ -76,6 +76,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 10;
 }
 
 .campus-gallery-stage .sphere {
@@ -88,27 +90,10 @@
   will-change: transform;
 }
 
-.campus-gallery-stage .overlay {
-  background-image: var(--gradient);
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  z-index: 3;
-  pointer-events: none;
-  opacity: 1;
-}
-
+.campus-gallery-stage .overlay,
 .campus-gallery-stage .overlay--blur {
-  mask-image: var(--gradient-blur);
-  -webkit-mask-image: var(--gradient-blur);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  z-index: 3;
-  opacity: 1;
-  pointer-events: none;
+  display: none !important;
+  pointer-events: none !important;
 }
 
 .campus-gallery-stage .item {
@@ -123,6 +108,8 @@
   margin: auto;
   backface-visibility: hidden;
   color: transparent;
+  cursor: pointer !important;
+  pointer-events: auto !important;
   transform-style: preserve-3d;
   transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
   transform: rotateY(
@@ -143,19 +130,21 @@
 .campus-gallery-stage .item__image {
   position: absolute;
   display: block;
-  inset: 8px;
+  inset: 6px;
   border-radius: 14px;
   background-color: var(--item-bg);
   overflow: hidden;
   backface-visibility: hidden;
-  transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 300ms;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 250ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 250ms;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .campus-gallery-stage .item__image:hover {
-  box-shadow: 0 10px 25px rgba(234, 88, 12, 0.3), 0 0 0 2px #ea580c;
-  transform: scale(1.04);
+  box-shadow: 0 14px 35px rgba(234, 88, 12, 0.6), 0 0 0 3px #ea580c;
+  transform: scale(1.12);
+  z-index: 99;
 }
 
 .campus-gallery-stage .item__image[data-focused="true"] {

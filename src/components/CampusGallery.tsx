@@ -26,7 +26,6 @@ export default function CampusGallery() {
   const mainRef = useRef<HTMLDivElement>(null)
   const sphereRef = useRef<HTMLDivElement>(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
-  const itemPointerDownRef = useRef({ x: 0, y: 0, time: 0 })
 
   // 3D Sphere inertia & dragging state
   useEffect(() => {
@@ -46,6 +45,7 @@ export default function CampusGallery() {
       hasMoved: false,
       startX: 0,
       startY: 0,
+      startTime: 0,
       lastMoveTime: 0,
       lastMoveX: 0,
       lastMoveY: 0,
@@ -112,6 +112,7 @@ export default function CampusGallery() {
 
       state.startX = e.clientX
       state.startY = e.clientY
+      state.startTime = performance.now()
       state.lastMoveX = e.clientX
       state.lastMoveY = e.clientY
       state.lastMoveTime = performance.now()
@@ -160,6 +161,38 @@ export default function CampusGallery() {
         try {
           mainEl.releasePointerCapture(e.pointerId)
         } catch {}
+      }
+
+      const dx = Math.abs(e.clientX - state.startX)
+      const dy = Math.abs(e.clientY - state.startY)
+      const dt = performance.now() - state.startTime
+
+      // If user released within 10px and 450ms, this is a clean tap/click
+      if (dx < 10 && dy < 10 && dt < 450) {
+        const target = e.target as HTMLElement
+        let itemEl = target?.closest('.item') as HTMLElement | null
+
+        if (!itemEl) {
+          const elements = document.elementsFromPoint(e.clientX, e.clientY)
+          for (const el of elements) {
+            const candidate = el.closest('.item') as HTMLElement | null
+            if (candidate) {
+              itemEl = candidate
+              break
+            }
+          }
+        }
+
+        if (itemEl) {
+          const idxStr = itemEl.getAttribute('data-index')
+          if (idxStr !== null) {
+            const idx = parseInt(idxStr, 10)
+            if (!isNaN(idx) && idx >= 0) {
+              setSelectedImageIndex(idx)
+              return
+            }
+          }
+        }
       }
 
       if (state.hasMoved) {
@@ -215,10 +248,6 @@ export default function CampusGallery() {
     )
   }, [])
 
-  const handleCardClick = (idx: number) => {
-    setSelectedImageIndex(idx)
-  }
-
   return (
     <section
       id="life-on-campus"
@@ -240,8 +269,8 @@ export default function CampusGallery() {
         </p>
 
         {/* Interactive Helper Badge */}
-        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-slate-300/80 text-xs text-slate-600 shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c]" />
+        <div className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 shadow-sm">
+          <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
           <span>Click any image to enlarge &amp; highlight · Drag to spin sphere</span>
         </div>
       </div>
@@ -254,6 +283,7 @@ export default function CampusGallery() {
               <div
                 key={idx}
                 className="item"
+                data-index={idx}
                 data-src={item.src}
                 data-item={`${item.x},${item.y}`}
                 data-item-size={`${item.sx},${item.sy}`}
@@ -263,18 +293,10 @@ export default function CampusGallery() {
                   '--item-size-x': item.sx,
                   '--item-size-y': item.sy
                 } as React.CSSProperties}
-                onPointerDown={(e) => {
-                  itemPointerDownRef.current = { x: e.clientX, y: e.clientY, time: Date.now() }
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSelectedImageIndex(idx)
                 }}
-                onPointerUp={(e) => {
-                  const dx = Math.abs(e.clientX - itemPointerDownRef.current.x)
-                  const dy = Math.abs(e.clientY - itemPointerDownRef.current.y)
-                  const dt = Date.now() - itemPointerDownRef.current.time
-                  if (dx < 10 && dy < 10 && dt < 500) {
-                    handleCardClick(idx)
-                  }
-                }}
-                onClick={() => handleCardClick(idx)}
               >
                 <div className="item__image">
                   <img
@@ -288,15 +310,12 @@ export default function CampusGallery() {
             ))}
           </div>
         </div>
-
-        <div className="overlay" />
-        <div className="overlay overlay--blur" />
       </div>
 
       {/* ================= Lightbox Spotlight Modal: Enlarged & Highlighted ================= */}
       {selectedImageIndex !== null && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-slate-950/85 backdrop-blur-md animate-fadeIn"
+          className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-slate-950/90 backdrop-blur-md animate-fadeIn"
           onClick={() => setSelectedImageIndex(null)}
           role="dialog"
           aria-modal="true"
@@ -325,7 +344,7 @@ export default function CampusGallery() {
               <button
                 type="button"
                 onClick={() => setSelectedImageIndex(null)}
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 active:scale-95 cursor-pointer border border-white/20 shadow-lg"
+                className="w-10 h-10 rounded-full bg-white/15 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 active:scale-95 cursor-pointer border border-white/25 shadow-lg"
                 aria-label="Close photo"
                 title="Close (Esc)"
               >
@@ -339,7 +358,7 @@ export default function CampusGallery() {
               <button
                 type="button"
                 onClick={handlePrev}
-                className="absolute left-2 sm:-left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/60 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md border border-white/20 shadow-2xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                className="absolute left-2 sm:-left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/70 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md border border-white/20 shadow-2xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                 aria-label="Previous photo"
                 title="Previous (Arrow Left)"
               >
@@ -347,7 +366,7 @@ export default function CampusGallery() {
               </button>
 
               {/* High-Resolution Centered Image */}
-              <div className="relative max-h-[75vh] sm:max-h-[80vh] rounded-2xl sm:rounded-3xl overflow-hidden bg-black/50 border-2 border-[#ea580c]/60 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_50px_rgba(234,88,12,0.4)]">
+              <div className="relative max-h-[75vh] sm:max-h-[80vh] rounded-2xl sm:rounded-3xl overflow-hidden bg-black/60 border-2 border-[#ea580c] shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_60px_rgba(234,88,12,0.45)]">
                 <img
                   src={sphereItems[selectedImageIndex].src}
                   alt={`Life on campus photo ${selectedImageIndex + 1}`}
@@ -359,7 +378,7 @@ export default function CampusGallery() {
               <button
                 type="button"
                 onClick={handleNext}
-                className="absolute right-2 sm:-right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/60 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md border border-white/20 shadow-2xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                className="absolute right-2 sm:-right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/70 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md border border-white/20 shadow-2xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
                 aria-label="Next photo"
                 title="Next (Arrow Right)"
               >
