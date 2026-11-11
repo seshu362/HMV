@@ -1,5 +1,12 @@
 import { useEffect, useRef } from 'react'
 
+// Authentic Promise section card backgrounds from Hindi Mahavidyalaya
+import strongAcademicsImg from '../assets/Promise/Strong academics for tomorrow.jpg'
+import holisticMentorshipImg from '../assets/Promise/Holistic mentorship & campus vitality.jpg'
+import careerPathwaysImg from '../assets/Promise/Career pathways & global enterprise.jpg'
+import heritageLanguageImg from '../assets/Promise/Heritage, language & national pride.jpg'
+import inclusiveEducationImg from '../assets/Promise/Inclusive education for all learners.jpg'
+
 export default function PromiseSection() {
   const rootRef = useRef<HTMLDivElement>(null)
 
@@ -444,7 +451,7 @@ export default function PromiseSection() {
             <article className="mzaCarousel-slide" role="group" aria-roledescription="slide" aria-label="1 of 5">
               <div
                 className="mzaCard"
-                style={{ '--mzaCard-bg': "url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=85')" } as React.CSSProperties}
+                style={{ '--mzaCard-bg': `url("${strongAcademicsImg}")` } as React.CSSProperties}
               >
                 <header className="mzaCard-head mzaPar-1">
                   <h2 className="mzaCard-title">Strong academics for tomorrow</h2>
@@ -465,7 +472,7 @@ export default function PromiseSection() {
             <article className="mzaCarousel-slide" role="group" aria-roledescription="slide" aria-label="2 of 5">
               <div
                 className="mzaCard"
-                style={{ '--mzaCard-bg': "url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1600&q=85')" } as React.CSSProperties}
+                style={{ '--mzaCard-bg': `url("${holisticMentorshipImg}")` } as React.CSSProperties}
               >
                 <header className="mzaCard-head mzaPar-1">
                   <h2 className="mzaCard-title">Holistic mentorship & campus vitality</h2>
@@ -486,7 +493,7 @@ export default function PromiseSection() {
             <article className="mzaCarousel-slide" role="group" aria-roledescription="slide" aria-label="3 of 5">
               <div
                 className="mzaCard"
-                style={{ '--mzaCard-bg': "url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=85')" } as React.CSSProperties}
+                style={{ '--mzaCard-bg': `url("${careerPathwaysImg}")` } as React.CSSProperties}
               >
                 <header className="mzaCard-head mzaPar-1">
                   <h2 className="mzaCard-title">Career pathways & global enterprise</h2>
@@ -507,7 +514,7 @@ export default function PromiseSection() {
             <article className="mzaCarousel-slide" role="group" aria-roledescription="slide" aria-label="4 of 5">
               <div
                 className="mzaCard"
-                style={{ '--mzaCard-bg': "url('https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1600&q=85')" } as React.CSSProperties}
+                style={{ '--mzaCard-bg': `url("${heritageLanguageImg}")` } as React.CSSProperties}
               >
                 <header className="mzaCard-head mzaPar-1">
                   <h2 className="mzaCard-title">Heritage, language & national pride</h2>
@@ -528,7 +535,7 @@ export default function PromiseSection() {
             <article className="mzaCarousel-slide" role="group" aria-roledescription="slide" aria-label="5 of 5">
               <div
                 className="mzaCard"
-                style={{ '--mzaCard-bg': "url('https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=85')" } as React.CSSProperties}
+                style={{ '--mzaCard-bg': `url("${inclusiveEducationImg}")` } as React.CSSProperties}
               >
                 <header className="mzaCard-head mzaPar-1">
                   <h2 className="mzaCard-title">Inclusive education for all learners</h2>
