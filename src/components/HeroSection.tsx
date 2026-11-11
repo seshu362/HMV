@@ -7,42 +7,72 @@ import {
   ArrowRight
 } from 'lucide-react'
 
-// High-resolution daytime collegiate campus imagery matching the Figma design
+// Original collegiate banners from Hindi Mahavidyalaya
+import banner1 from '../assets/Banners/banner1.jpg'
+import banner2 from '../assets/Banners/banner2.jpeg'
+import banner3 from '../assets/Banners/banner3.jpg'
+import banner4 from '../assets/Banners/banner4.jpg'
+import banner5 from '../assets/Banners/banner5.jpg'
+import banner6 from '../assets/Banners/banner6.jpg'
+import banner7 from '../assets/Banners/banner7.jpg'
+import banner8 from '../assets/Banners/banner8.jpg'
+
 const slides = [
   {
     id: 1,
-    title: 'Admissions 2026-27 are open',
-    tagline: 'Arts, Commerce, Science and postgraduate programmes in Nallakunta, affiliated to Osmania University.',
-    image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=2000&q=85',
-    alt: 'Hindi Mahavidyalaya Campus Entrance & Lush Greenery',
+    title: 'Welcome to Hindi Mahavidyalaya',
+    tagline: 'Autonomous & NAAC Re-Accredited Institution in Nallakunta, Hyderabad, Affiliated to Osmania University.',
+    image: banner1,
+    alt: 'Hindi Mahavidyalaya Main Campus Entrance Arch in Nallakunta, Hyderabad',
   },
   {
     id: 2,
-    title: '60 Years of Academic Excellence',
-    tagline: 'Autonomous institution empowering students with future-ready skills, research labs, and value-based education.',
-    image: 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=2000&q=85',
-    alt: 'Heritage Academic Block & Grounds',
+    title: '60 Years of Academic Distinction',
+    tagline: 'Distinguished academic leadership, Chancellor procession and NCC Guard of Honour upholding traditions of excellence.',
+    image: banner2,
+    alt: 'Convocation Academic Procession with NCC Cadets and University Dignitaries',
   },
   {
     id: 3,
-    title: 'State-of-the-Art Learning & Labs',
-    tagline: 'Comprehensive UG & PG departments with high-tech computer science centers and university library.',
-    image: 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=2000&q=85',
-    alt: 'University Central Library & Research',
+    title: 'Dedicated & Renowned Faculty',
+    tagline: 'Empowering learners with visionary mentorship, deep scholastic values, and holistic educational pedagogy.',
+    image: banner3,
+    alt: 'Distinguished Faculty Members of Hindi Mahavidyalaya',
   },
   {
     id: 4,
-    title: 'Vibrant Campus Life in Nallakunta',
-    tagline: 'Annual cultural fests, National Hindi Divas, NCC, NSS, sports complex, and active student clubs.',
-    image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=2000&q=85',
-    alt: 'Student Community & Co-curriculars',
+    title: 'Conferring Degrees of Distinction',
+    tagline: 'Proud graduates stepping forward into promising corporate, scientific, and research leadership careers.',
+    image: banner4,
+    alt: 'Graduation Day Ceremony at Hindi Mahavidyalaya with Degree Recipients',
   },
   {
     id: 5,
-    title: 'Research, Innovation & Placements',
-    tagline: 'Leading recruiters, dedicated career placement cell, entrepreneurship incubation and alumni network.',
-    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=85',
-    alt: 'Graduation & Placements',
+    title: 'Champions in Sports & Athletics',
+    tagline: 'State and university championship trophies in fencing, athletics, and collegiate competitive sports.',
+    image: banner5,
+    alt: 'Hindi Mahavidyalaya Sports Tournament Champions with University Trophies',
+  },
+  {
+    id: 6,
+    title: 'Vibrant Heritage & Cultural Celebrations',
+    tagline: 'Fostering cultural unity, annual celebrations, fine arts, and rich Indian heritage on campus.',
+    image: banner6,
+    alt: 'Annual Cultural Celebration and Saraswati Pooja at Hindi Mahavidyalaya',
+  },
+  {
+    id: 7,
+    title: 'NSS & Community Social Leadership',
+    tagline: 'Instilling civic responsibility, environmental awareness campaigns, and community empowerment.',
+    image: banner7,
+    alt: 'National Service Scheme (NSS) Student Outreach and Social Awareness Campaign',
+  },
+  {
+    id: 8,
+    title: 'NCC Guard of Honour & Leadership',
+    tagline: 'National Cadet Corps instilling unwavering discipline, character, patriotism, and leadership.',
+    image: banner8,
+    alt: 'NCC Cadets Guard of Honour Welcoming University Chancellor and Chief Guests',
   },
 ]
 
