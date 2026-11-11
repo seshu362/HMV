@@ -291,6 +291,13 @@ export default function AboutSection() {
 
         .card-group:hover > .little-card {
           opacity: 1;
+          pointer-events: auto;
+        }
+
+        /* Hovering any individual image card brings it completely to the front with full z-index */
+        .card-group .card:hover {
+          z-index: 50 !important;
+          cursor: pointer;
         }
 
         /* 100% Exact Hyperplexed Resting Rotations - First Big Card (:nth-child(2)) is the frontmost visible card */
