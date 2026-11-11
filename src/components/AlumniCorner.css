@@ -967,26 +967,28 @@
   clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
 }
 .alumni-corner-wrapper .pages_page__inner .content_picture {
-  width: 320px;
+  width: 330px;
   position: absolute;
   left: calc(50% + 15px);
   transform: none;
-  top: 175px;
+  top: 145px;
 }
 .alumni-corner-wrapper .pages_page__inner .content_picture img {
   width: 100%;
-  max-height: 240px;
+  height: 310px;
+  max-height: 330px;
   margin: 0;
   display: inline-block;
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.55);
   object-fit: cover;
+  object-position: center 20%;
 }
 .alumni-corner-wrapper .pages_page__inner .content_quote {
   position: absolute;
-  left: calc(50% + 348px);
+  left: calc(50% + 358px);
   bottom: 110px;
-  width: 185px;
+  width: 180px;
 }
 .alumni-corner-wrapper .pages_page__inner .content_quote h5 span {
   display: block;
