@@ -117,7 +117,7 @@ export default function AboutSection() {
   return (
     <section
       id="about"
-      className="relative w-full bg-white py-20 sm:py-28 lg:py-36 overflow-hidden border-t border-slate-100"
+      className="relative w-full bg-white pt-12 sm:pt-16 lg:pt-20 pb-6 sm:pb-8 lg:pb-10 overflow-hidden border-t border-slate-100"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
@@ -155,7 +155,7 @@ export default function AboutSection() {
           </div>
 
           {/* ================= RIGHT COLUMN: Exact Card Swiper Component ================= */}
-          <div className="lg:col-span-6 relative flex flex-col items-center justify-center py-10 sm:py-16">
+          <div className="lg:col-span-6 relative flex flex-col items-center justify-center pt-4 pb-2 sm:pt-6 sm:pb-4">
             
             {/* Card Swiper Container */}
             <div className="card-swiper relative w-full flex flex-col items-center justify-center">
