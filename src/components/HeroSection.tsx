@@ -185,13 +185,13 @@ export default function HeroSection() {
     }
   }, [])
 
-  // Auto slide interval (pauses on hover)
+  // Auto slide interval (4 seconds per banner, pauses on hover)
   useEffect(() => {
     if (isPaused) return
     const interval = setInterval(() => {
       const nextIndex = (currentRef.current + 1) % slides.length
       triggerSlide(nextIndex)
-    }, 6500)
+    }, 4000)
     return () => clearInterval(interval)
   }, [isPaused, triggerSlide])
 
