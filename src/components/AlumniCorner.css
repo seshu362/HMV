@@ -708,8 +708,7 @@
   background: url("https://data.whicdn.com/images/86911589/original.jpg");
 }
 .alumni-corner-wrapper .pages_page:nth-of-type(3) .pages_page__inner {
-  background: url("https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1600&q=85");
-  background-position: 0 0;
+  background: #ffffff;
 }
 .alumni-corner-wrapper .pages_page:nth-of-type(3) .pages_page__inner .content {
   -webkit-clip-path: polygon(0% 0%, 50% 0, 50% 100%, 0% 100%);
@@ -736,9 +735,7 @@
   height: 100%;
   width: 200%;
   position: relative;
-  background: linear-gradient(rgba(30, 27, 75, 0.35), rgba(15, 23, 42, 0.65)), url("https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1600&q=85");
-  background-size: cover !important;
-  background-position: center !important;
+  background: #1e1b4b;
   left: -100%;
 }
 .alumni-corner-wrapper .pages_page:nth-of-type(5) .pages_page__inner {
