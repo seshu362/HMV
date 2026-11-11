@@ -121,7 +121,7 @@ export default function NoticesSection() {
   }
 
   return (
-    <section id="notices" className="relative py-20 lg:py-28 bg-[#fafafc] overflow-hidden">
+    <section id="notices" className="relative pt-6 sm:pt-8 lg:pt-10 pb-16 lg:pb-20 bg-[#fafafc] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         
         {/* ================= 1. Header matching Figma ================= */}

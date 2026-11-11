@@ -43,7 +43,7 @@ export default function ProgrammesSection() {
   return (
     <section
       id="programmes"
-      className="relative py-12 sm:py-16 bg-[#fcfcfd] overflow-hidden flex flex-col justify-center min-h-[580px] lg:min-h-[640px]"
+      className="relative pt-6 sm:pt-8 pb-8 sm:pb-10 bg-[#fcfcfd] overflow-hidden flex flex-col justify-center"
     >
       {/* Anchor alias for navbar / footer links */}
       <div id="academics" className="absolute -top-24 pointer-events-none" />

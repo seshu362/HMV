@@ -172,7 +172,7 @@ export default function NewsEventsSection() {
   }
 
   return (
-    <section id="events" className="relative py-20 lg:py-28 bg-[#fafafc] overflow-hidden">
+    <section id="events" className="relative pt-8 sm:pt-10 lg:pt-12 pb-8 sm:pb-10 lg:pb-12 bg-[#fafafc] overflow-hidden">
       
       {/* Halftone Dot Grid across the ENTIRE Section */}
       <div
