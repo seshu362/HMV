@@ -1,49 +1,69 @@
 import { useState } from 'react'
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 
-// 3 Curated card groups with verified, fast-loading free Unsplash imagery
+// Authentic Hindi Mahavidyalaya leadership and convocation imagery
+import aboutPrincipal1 from '../assets/About/IMG_0667.jpeg'
+import aboutPrincipal2 from '../assets/About/DrBalaKumar.jpeg'
+import aboutProcession from '../assets/About/0002.jpeg'
+import aboutJyoti from '../assets/About/0006.jpeg'
+import aboutSpeech from '../assets/About/0007-2.jpeg'
+import aboutMemento from '../assets/About/0008.jpeg'
+import aboutDegree from '../assets/About/0014.jpeg'
+import aboutGroup from '../assets/About/0030.jpeg'
+
+// Authentic collegiate campus banners for secondary stacks
+import banner1 from '../assets/Banners/banner1.jpg'
+import banner3 from '../assets/Banners/banner3.jpg'
+import banner4 from '../assets/Banners/banner4.jpg'
+import banner5 from '../assets/Banners/banner5.jpg'
+import banner6 from '../assets/Banners/banner6.jpg'
+import banner7 from '../assets/Banners/banner7.jpg'
+import banner8 from '../assets/Banners/banner8.jpg'
+
+// 3 Curated card groups with 100% authentic Hindi Mahavidyalaya imagery
 const cardGroupsData = [
   {
     index: 0,
-    title: 'Heritage & Convocation',
+    title: 'Leadership & Academic Convocation',
     // Alternating Little cards (1, 3, 5, 7) and Big cards (2, 4, 6, 8)
+    // First Big Card (index 1) displays IMG_0667.jpeg (Principal Dr. Bala Kumar) in front
     cards: [
-      { type: 'little', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80' },
+      { type: 'little', image: aboutJyoti },
+      { type: 'big', image: aboutPrincipal1 }, // IMG_0667.jpeg - Displayed first in front
+      { type: 'little', image: aboutMemento },
+      { type: 'big', image: aboutPrincipal2 }, // DrBalaKumar.jpeg
+      { type: 'little', image: aboutProcession },
+      { type: 'big', image: aboutDegree },     // 0014.jpeg
+      { type: 'little', image: aboutSpeech },
+      { type: 'big', image: aboutGroup },      // 0030.jpeg
     ],
   },
   {
     index: 1,
-    title: 'Research & Digital Labs',
+    title: 'Campus Heritage & Leadership',
     cards: [
-      { type: 'little', image: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80' },
+      { type: 'little', image: aboutProcession },
+      { type: 'big', image: banner1 },
+      { type: 'little', image: aboutJyoti },
+      { type: 'big', image: banner3 },
+      { type: 'little', image: aboutMemento },
+      { type: 'big', image: banner8 },
+      { type: 'little', image: aboutSpeech },
+      { type: 'big', image: aboutPrincipal1 },
     ],
   },
   {
     index: 2,
-    title: 'Campus Life & Sports',
+    title: 'Student Life, Sports & Culture',
     cards: [
-      { type: 'little', image: 'https://images.unsplash.com/photo-1560439514-4e9645039924?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1526976668912-1a811878dd37?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80' },
-      { type: 'little', image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=500&q=80' },
-      { type: 'big', image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80' },
+      { type: 'little', image: aboutDegree },
+      { type: 'big', image: banner5 },
+      { type: 'little', image: aboutGroup },
+      { type: 'big', image: banner6 },
+      { type: 'little', image: aboutMemento },
+      { type: 'big', image: banner7 },
+      { type: 'little', image: aboutJyoti },
+      { type: 'big', image: banner4 },
     ],
   },
 ]
@@ -265,6 +285,7 @@ export default function AboutSection() {
           box-shadow: -1vmin 1vmin 2vmin rgba(0, 0, 0, 0.25);
           pointer-events: none;
           border: 3px solid white;
+          z-index: 10;
           transition: transform 800ms cubic-bezier(.05,.43,.25,.95), opacity 300ms ease;
         }
 
@@ -272,21 +293,25 @@ export default function AboutSection() {
           opacity: 1;
         }
 
-        /* 100% Exact Hyperplexed Resting Rotations */
+        /* 100% Exact Hyperplexed Resting Rotations - First Big Card (:nth-child(2)) is the frontmost visible card */
         .card-group > .big-card:nth-child(2) {
           transform: translateX(-10%) rotate(-1deg);
+          z-index: 5;
         }
 
         .card-group > .big-card:nth-child(4) {
           transform: rotate(2deg);
+          z-index: 4;
         }
 
         .card-group > .big-card:nth-child(6) {
           transform: translateX(-6%) rotate(-3deg);
+          z-index: 3;
         }
 
         .card-group > .big-card:nth-child(8) {
           transform: translate(10%, 3%) rotate(5deg);
+          z-index: 2;
         }
 
         /* 100% Exact Hyperplexed Hover Fan-out Effects */
