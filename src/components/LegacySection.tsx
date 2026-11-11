@@ -64,7 +64,7 @@ export default function LegacySection() {
     <section
       id="legacy"
       ref={sectionRef}
-      className="relative pt-4 sm:pt-6 md:pt-8 pb-32 sm:pb-40 md:pb-48 bg-white overflow-hidden"
+      className="relative z-10 pt-4 sm:pt-6 md:pt-8 pb-32 sm:pb-40 md:pb-48 bg-white overflow-hidden"
     >
       {/* Header Container */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">

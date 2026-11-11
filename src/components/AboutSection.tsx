@@ -117,10 +117,10 @@ export default function AboutSection() {
   return (
     <section
       id="about"
-      className="relative w-full bg-white pt-12 sm:pt-16 lg:pt-20 pb-6 sm:pb-8 lg:pb-10 overflow-hidden border-t border-slate-100"
+      className="relative z-30 w-full bg-white pt-12 sm:pt-16 lg:pt-20 pb-6 sm:pb-8 lg:pb-10 overflow-visible border-t border-slate-100"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 overflow-visible">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center overflow-visible">
           
           {/* ================= LEFT COLUMN: Typography & Content ================= */}
           <div className="lg:col-span-6 flex flex-col items-start pr-0 lg:pr-6 z-10">
@@ -155,13 +155,13 @@ export default function AboutSection() {
           </div>
 
           {/* ================= RIGHT COLUMN: Exact Card Swiper Component ================= */}
-          <div className="lg:col-span-6 relative flex flex-col items-center justify-center pt-4 pb-2 sm:pt-6 sm:pb-4">
+          <div className="lg:col-span-6 relative z-30 flex flex-col items-center justify-center pt-4 pb-2 sm:pt-6 sm:pb-4 overflow-visible">
             
             {/* Card Swiper Container */}
-            <div className="card-swiper relative w-full flex flex-col items-center justify-center">
+            <div className="card-swiper relative z-30 w-full flex flex-col items-center justify-center overflow-visible">
               
               {/* Groups Stack Container */}
-              <div className="card-groups relative w-[240px] sm:w-[280px] md:w-[300px] aspect-[5/7]">
+              <div className="card-groups relative z-30 w-[240px] sm:w-[280px] md:w-[300px] aspect-[5/7] overflow-visible">
                 {cardGroupsData.map((group) => {
                   const status = statuses[group.index] || 'unknown'
 
@@ -170,7 +170,7 @@ export default function AboutSection() {
                       key={group.index}
                       data-index={group.index}
                       data-status={status}
-                      className="card-group absolute top-0 left-0 w-full h-full aspect-[5/7]"
+                      className="card-group absolute top-0 left-0 w-full h-full aspect-[5/7] overflow-visible"
                     >
                       {/* 8 Cards in Exact Alternating Little (1, 3, 5, 7) and Big (2, 4, 6, 8) Order */}
                       {group.cards.map((c, cIdx) => (
@@ -186,7 +186,7 @@ export default function AboutSection() {
               </div>
 
               {/* Swiper Buttons: Only Left & Right Arrows, No Numbers */}
-              <div className="card-swiper-buttons mt-12 sm:mt-14 flex items-center justify-center gap-5">
+              <div className="card-swiper-buttons relative z-40 mt-12 sm:mt-14 flex items-center justify-center gap-5">
                 <button
                   type="button"
                   onClick={handlePrev}
@@ -215,6 +215,12 @@ export default function AboutSection() {
 
       {/* Embedded CSS for 100% Exact Hyperplexed Card Swiper Effect */}
       <style>{`
+        .card-swiper,
+        .card-groups,
+        .card-group {
+          overflow: visible !important;
+        }
+
         .card-groups,
         .card-group,
         .card {
@@ -228,6 +234,7 @@ export default function AboutSection() {
           width: 100%;
           height: 100%;
           transition: transform 400ms ease;
+          z-index: 20;
         }
 
         .card-group[data-status="unknown"] {
@@ -238,6 +245,7 @@ export default function AboutSection() {
         .card-group[data-status="active"] {
           transition-delay: 300ms;
           transform: scale(1);
+          z-index: 25;
         }
 
         .card-group[data-status="after"] {
@@ -285,18 +293,19 @@ export default function AboutSection() {
           box-shadow: -1vmin 1vmin 2vmin rgba(0, 0, 0, 0.25);
           pointer-events: none;
           border: 3px solid white;
-          z-index: 10;
+          z-index: 20;
           transition: transform 800ms cubic-bezier(.05,.43,.25,.95), opacity 300ms ease;
         }
 
         .card-group:hover > .little-card {
           opacity: 1;
           pointer-events: auto;
+          z-index: 30;
         }
 
         /* Hovering any individual image card brings it completely to the front with full z-index */
         .card-group .card:hover {
-          z-index: 50 !important;
+          z-index: 60 !important;
           cursor: pointer;
         }
 
