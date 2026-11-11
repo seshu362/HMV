@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 import { Sparkles, Award, X } from 'lucide-react'
 
+// Authentic Hindi Mahavidyalaya achievements and sports photography
+import achieveConvocationAward from '../assets/Achievements/0015.jpeg'
+import achieveInauguration from '../assets/Achievements/ai_0003.jpeg'
+import achieveSportsPodium from '../assets/Achievements/Ou tournament 2.jpg'
+import achieveAuditoriumAssembly from '../assets/Achievements/0022.jpeg'
+import achieveNccArmyAward from '../assets/Achievements/Ou tournament 3.jpg'
+import achieveGraduationSpeech from '../assets/Achievements/0007-2.jpeg'
+import achieveMementoHonour from '../assets/Achievements/0008.jpeg'
+import achieveCouncilAwards from '../assets/Achievements/Ou tournament 5.jpg'
+
 interface AchievementCard {
   id: number
   title: string
@@ -12,59 +22,59 @@ interface AchievementCard {
 const achievementItems: AchievementCard[] = [
   {
     id: 1,
-    title: 'Diamond Jubilee Convocation',
-    subtitle: '60th Academic Convocation',
-    description: 'Vice Chancellor and academic heads conferring degrees and gold medals to distinction scholars at the Diamond Jubilee.',
-    image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=85',
+    title: 'University Gold Medalists',
+    subtitle: 'Academic Honours',
+    description: 'Vice Chancellor and academic dignitaries conferring degrees and gold medals to distinction scholars at the Convocation.',
+    image: achieveConvocationAward,
   },
   {
     id: 2,
-    title: 'Digital AI Computing Lab',
-    subtitle: 'Autonomous IT Infrastructure',
-    description: 'Advanced computing centres, cybersecurity labs, and multimedia language facilities empowering 4,000+ students.',
-    image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=800&q=85',
+    title: 'Academic Facility Inauguration',
+    subtitle: 'Autonomous Milestones',
+    description: 'Governing Council patrons and Principal Dr. Bala Kumar inaugurating modern academic laboratories and digital learning centers.',
+    image: achieveInauguration,
   },
   {
     id: 3,
-    title: 'Ceremonial Lamp Lighting',
-    subtitle: 'Heritage & Traditions',
-    description: 'Patrons and academic dignitaries commencing the national linguistics and commerce symposium.',
-    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=85',
+    title: 'National Games & OU Championship',
+    subtitle: 'Sports Excellence',
+    description: 'Hindi Mahavidyalaya collegiate fencing, athletics, and sports medalists achieving top podium victories at inter-university championships.',
+    image: achieveSportsPodium,
   },
   {
     id: 4,
-    title: 'University Gold Medalists',
-    subtitle: 'Academic Honours',
-    description: 'Students achieving top state ranks across Osmania University autonomous examinations and research symposiums.',
-    image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=85',
+    title: 'Convocation Ceremony Assembly',
+    subtitle: '60th Academic Convocation',
+    description: 'Hundreds of proud undergraduate and postgraduate scholars assembled in ceremonial academic robes at the college auditorium.',
+    image: achieveAuditoriumAssembly,
   },
   {
     id: 5,
-    title: 'Central Digital E-Library',
-    subtitle: 'Research & Knowledge Hub',
-    description: 'Over 55,000 reference volumes, digital journals, DELNET access, and quiet air-conditioned study alcoves.',
-    image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=85',
+    title: 'NCC Defence Commendation',
+    subtitle: 'National Cadet Corps',
+    description: 'NCC women cadets receiving prestigious military commendation awards from senior Indian Army leadership for exceptional discipline.',
+    image: achieveNccArmyAward,
   },
   {
     id: 6,
-    title: 'Campus Recruitment Drives',
-    subtitle: 'Career Placements',
-    description: '35+ leading corporate firms and multinational corporations conducting on-campus placements for final-year students.',
-    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=85',
+    title: 'Graduation Day Keynote Address',
+    subtitle: 'Academic Leadership',
+    description: 'Distinguished university guests and academic dignitaries addressing graduates on ethical leadership and corporate excellence.',
+    image: achieveGraduationSpeech,
   },
   {
     id: 7,
-    title: 'National Hindi Symposium',
-    subtitle: 'Linguistic Excellence',
-    description: 'Eminent authors, linguists, and researchers sharing keynote translation research and literary analysis.',
-    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=85',
+    title: 'Felicitation of Eminent Guests',
+    subtitle: 'Collegiate Honours',
+    description: 'Honouring university leadership, visiting patrons, and scholars with commemorative mementos and citations of appreciation.',
+    image: achieveMementoHonour,
   },
   {
     id: 8,
-    title: 'NAAC Autonomous Accreditation',
-    subtitle: 'Institutional Prestige',
-    description: 'Six decades of values-driven higher education, recognized for academic rigor and autonomous excellence.',
-    image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=85',
+    title: 'Governing Council Merit Awards',
+    subtitle: 'Scholastic Distinction',
+    description: 'M.C. Gupta College of Business Management Governing Council and college trustees felicitating top scholars with merit certificates.',
+    image: achieveCouncilAwards,
   },
 ]
 
