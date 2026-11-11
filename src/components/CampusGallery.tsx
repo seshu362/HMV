@@ -1,6 +1,25 @@
 import { useEffect, useRef } from 'react'
-import sphereItems from './sphereItems.json'
+import sphereCoords from './sphereItems.json'
 import './CampusGallery.css'
+
+interface SphereCoord {
+  x: number
+  y: number
+  sx: number
+  sy: number
+}
+
+// Dynamically import all authentic campus photos from src/assets/Gallery
+const galleryModules = import.meta.glob<{ default: string }>(
+  '../assets/Gallery/*.{jpg,jpeg,png,JPG,JPEG,PNG}',
+  { eager: true }
+)
+const galleryUrls = Object.values(galleryModules).map((mod) => mod.default)
+
+const sphereItems = (sphereCoords as SphereCoord[]).map((coord, idx) => ({
+  ...coord,
+  src: galleryUrls.length > 0 ? galleryUrls[idx % galleryUrls.length] : ''
+}))
 
 export default function CampusGallery() {
   const mainRef = useRef<HTMLDivElement>(null)
@@ -265,16 +284,6 @@ export default function CampusGallery() {
       const initialSrc = parentEl.getAttribute('data-src') || ''
       img.src = initialSrc
       img.alt = 'Life on campus enlarged'
-
-      // Preload high-res Unsplash image and swap smoothly once ready
-      const higherSrc = `https://images.unsplash.com${initialSrc
-        .replace('.jpg', '')
-        .replace('https://assets.codepen.io/215059', '')}?w=1200&h=1200&fit=crop`
-      const hiRes = new Image()
-      hiRes.onload = () => {
-        img.src = higherSrc
-      }
-      hiRes.src = higherSrc
 
       setTimeout(() => {
         const renderedRect = el.getBoundingClientRect()
