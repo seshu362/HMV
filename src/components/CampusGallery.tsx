@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import sphereCoords from './sphereItems.json'
 import './CampusGallery.css'
 
@@ -24,26 +25,23 @@ const sphereItems = (sphereCoords as SphereCoord[]).map((coord, idx) => ({
 export default function CampusGallery() {
   const mainRef = useRef<HTMLDivElement>(null)
   const sphereRef = useRef<HTMLDivElement>(null)
-  const frameRef = useRef<HTMLDivElement>(null)
-  const viewerRef = useRef<HTMLDivElement>(null)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
+  const itemPointerDownRef = useRef({ x: 0, y: 0, time: 0 })
 
+  // 3D Sphere inertia & dragging state
   useEffect(() => {
     const mainEl = mainRef.current
     const sphereEl = sphereRef.current
-    const frameEl = frameRef.current
-    const viewerEl = viewerRef.current
 
-    if (!mainEl || !sphereEl || !frameEl || !viewerEl) return
+    if (!mainEl || !sphereEl) return
 
     const MAX_POLAR_ROT_DEG = 3
     const PAN_SENSITIVITY = 18
-    const TRANSITION_DUR_MS = 300
 
     const state = {
       rotation: { x: 0, y: 0 },
       startRotation: { x: 0, y: 0 },
       inertiaFrame: null as number | null,
-      cancelTap: false,
       isPointerDown: false,
       hasMoved: false,
       startX: 0,
@@ -106,14 +104,10 @@ export default function CampusGallery() {
       state.inertiaFrame = requestAnimationFrame(step)
     }
 
-    // Pointer gesture handlers
+    // Pointer gesture handlers on sphere stage
     const handlePointerDown = (e: PointerEvent) => {
-      if ((e.target as HTMLElement)?.closest('.viewer .enlarge')) return
-      if (mainEl.getAttribute('data-enlarging') === 'true') return
-
       state.isPointerDown = true
       state.hasMoved = false
-      state.cancelTap = false
       stopInertia()
 
       state.startX = e.clientX
@@ -134,9 +128,8 @@ export default function CampusGallery() {
       const deltaX = e.clientX - state.startX
       const deltaY = e.clientY - state.startY
 
-      if (!state.hasMoved && Math.hypot(deltaX, deltaY) > 5) {
+      if (!state.hasMoved && Math.hypot(deltaX, deltaY) > 8) {
         state.hasMoved = true
-        state.cancelTap = true
         try {
           mainEl.setPointerCapture(e.pointerId)
         } catch {}
@@ -171,11 +164,6 @@ export default function CampusGallery() {
 
       if (state.hasMoved) {
         startInertia(state.velocityX, state.velocityY)
-        setTimeout(() => {
-          state.cancelTap = false
-        }, 120)
-      } else {
-        state.cancelTap = false
       }
     }
 
@@ -184,174 +172,52 @@ export default function CampusGallery() {
     window.addEventListener('pointerup', handlePointerUp)
     window.addEventListener('pointercancel', handlePointerUp)
 
-    // Taps & Enlarging
-    const getTransformRotation = (el: HTMLElement) => {
-      const str = el.style.transform || ''
-      const matchX = str.match(/rotateX\((-?\d+(\.\d+)?)deg\)/)
-      const matchY = str.match(/rotateY\((-?\d+(\.\d+)?)deg\)/)
-      return {
-        rotateX: matchX ? parseFloat(matchX[1]) : state.rotation.x,
-        rotateY: matchY ? parseFloat(matchY[1]) : state.rotation.y
-      }
-    }
-
-    const getRotationXY = (el: HTMLElement) => {
-      const style = window.getComputedStyle(el)
-      const transform = style.transform
-
-      if (transform && transform !== 'none' && transform.startsWith('matrix3d')) {
-        const match = transform.match(/matrix3d\((.+)\)/)
-        if (match) {
-          const values = match[1].split(',').map(parseFloat)
-          const rotateX = Math.asin(-values[9]) * (180 / Math.PI)
-          const rotateY = Math.atan2(values[8], values[10]) * (180 / Math.PI)
-          if (!isNaN(rotateX) && !isNaN(rotateY)) {
-            return { rotateX, rotateY }
-          }
-        }
-      }
-
-      // Robust fallback calculated directly from grid coordinates
-      const itemStr = el.getAttribute('data-item') || '0,0'
-      const [x, y] = itemStr.split(',').map(parseFloat)
-      return {
-        rotateY: 4.86486 * (x + 0.5),
-        rotateX: 4.86486 * (y - 0.5)
-      }
-    }
-
-    const handleClickScrim = () => {
-      const el = mainEl.querySelector('[data-focused="true"]') as HTMLElement | null
-      if (!el) return
-      const parentEl = el.closest('.item') as HTMLElement | null
-      if (!parentEl) return
-
-      const referenceDiv = parentEl.querySelector('.item__image--reference')
-      if (referenceDiv) referenceDiv.remove()
-
-      const enlargedImg = viewerEl.querySelector('.enlarge')
-      if (enlargedImg) enlargedImg.remove()
-
-      parentEl.style.setProperty('--rot-y-delta', '0deg')
-      parentEl.style.setProperty('--rot-x-delta', '0deg')
-      el.style.transform = ''
-      el.style.zIndex = '0'
-
-      setTimeout(() => {
-        mainEl.setAttribute('data-enlarging', 'false')
-        document.body.setAttribute('data-enlarging', 'false')
-        el.setAttribute('data-focused', 'false')
-      }, TRANSITION_DUR_MS)
-    }
-
-    const handleClick = (el: HTMLElement, parentEl: HTMLElement) => {
-      if (state.cancelTap || state.hasMoved) return
-      if (mainEl.getAttribute('data-enlarging') === 'true') return
-
-      el.setAttribute('data-focused', 'true')
-
-      const parentRotation = getRotationXY(parentEl)
-      const globalRotation = getTransformRotation(sphereEl)
-
-      const normalizeDegrees = (deg: number) => ((deg % 360) + 360) % 360
-      const parentY = normalizeDegrees(parentRotation.rotateY)
-      const globalY = normalizeDegrees(globalRotation.rotateY)
-
-      let rotY = -(parentY + globalY) % 360
-      if (rotY < -180) rotY += 360
-
-      parentEl.style.setProperty('--rot-y-delta', `${rotY}deg`)
-
-      const rotX = -parentRotation.rotateX - globalRotation.rotateX
-      parentEl.style.setProperty('--rot-x-delta', `${rotX}deg`)
-
-      const referenceDiv = document.createElement('div')
-      parentEl.appendChild(referenceDiv)
-      referenceDiv.style.opacity = '0'
-      referenceDiv.classList.add('item__image', 'item__image--reference')
-      referenceDiv.style.transform = `rotateX(${-parentRotation.rotateX}deg) rotateY(${-parentRotation.rotateY}deg)`
-
-      const sourceRect = referenceDiv.getBoundingClientRect()
-      const targetRect = frameEl.getBoundingClientRect()
-      const deltaScaleX = targetRect.width / (sourceRect.width || 1)
-      const deltaScaleY = targetRect.height / (sourceRect.height || 1)
-      const deltaScale = Math.min(deltaScaleX, deltaScaleY)
-
-      el.style.transform = `scale(${deltaScale}) translateZ(30px)`
-      el.style.zIndex = '3'
-
-      const img = document.createElement('img')
-      const initialSrc = parentEl.getAttribute('data-src') || ''
-      img.src = initialSrc
-      img.alt = 'Life on campus enlarged'
-
-      setTimeout(() => {
-        const renderedRect = el.getBoundingClientRect()
-        const mainRect = mainEl.getBoundingClientRect()
-        const enlargementEl = document.createElement('div')
-
-        Object.assign(enlargementEl.style, {
-          top: renderedRect.top - mainRect.top + 'px',
-          left: renderedRect.left - mainRect.left + 'px',
-          width: renderedRect.width + 'px',
-          height: renderedRect.height + 'px',
-          opacity: '0'
-        })
-
-        setTimeout(() => {
-          enlargementEl.style.opacity = '1'
-          mainEl.setAttribute('data-enlarging', 'true')
-          document.body.setAttribute('data-enlarging', 'true')
-        }, 50)
-
-        enlargementEl.classList.add('enlarge')
-        enlargementEl.appendChild(img)
-        viewerEl.appendChild(enlargementEl)
-      }, TRANSITION_DUR_MS)
-    }
-
-    // Single unified click dispatcher using event delegation
-    const handleMainClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (!target) return
-
-      // Clicked on scrim or enlarged image -> close
-      if (target.closest('.scrim') || target.closest('.viewer .enlarge')) {
-        handleClickScrim()
-        return
-      }
-
-      if (state.cancelTap || state.hasMoved) return
-
-      // Clicked an item image or tile
-      const imageEl = target.closest('.item__image') as HTMLElement | null
-      const parentEl = target.closest('.item') as HTMLElement | null
-
-      if (imageEl && parentEl) {
-        handleClick(imageEl, parentEl)
-      } else if (parentEl) {
-        const imgChild = parentEl.querySelector('.item__image') as HTMLElement | null
-        if (imgChild) handleClick(imgChild, parentEl)
-      }
-    }
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClickScrim()
-    }
-
-    mainEl.addEventListener('click', handleMainClick)
-    window.addEventListener('keydown', handleKeyDown)
-
     return () => {
       stopInertia()
       mainEl.removeEventListener('pointerdown', handlePointerDown)
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
       window.removeEventListener('pointercancel', handlePointerUp)
-      mainEl.removeEventListener('click', handleMainClick)
-      window.removeEventListener('keydown', handleKeyDown)
     }
   }, [])
+
+  // Keyboard navigation when image is enlarged
+  useEffect(() => {
+    if (selectedImageIndex === null) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedImageIndex(null)
+      } else if (e.key === 'ArrowLeft') {
+        setSelectedImageIndex((prev) =>
+          prev !== null ? (prev === 0 ? sphereItems.length - 1 : prev - 1) : null
+        )
+      } else if (e.key === 'ArrowRight') {
+        setSelectedImageIndex((prev) =>
+          prev !== null ? (prev === sphereItems.length - 1 ? 0 : prev + 1) : null
+        )
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedImageIndex])
+
+  const handlePrev = useCallback(() => {
+    setSelectedImageIndex((prev) =>
+      prev !== null ? (prev === 0 ? sphereItems.length - 1 : prev - 1) : null
+    )
+  }, [])
+
+  const handleNext = useCallback(() => {
+    setSelectedImageIndex((prev) =>
+      prev !== null ? (prev === sphereItems.length - 1 ? 0 : prev + 1) : null
+    )
+  }, [])
+
+  const handleCardClick = (idx: number) => {
+    setSelectedImageIndex(idx)
+  }
 
   return (
     <section
@@ -359,7 +225,7 @@ export default function CampusGallery() {
       className="relative w-full pt-10 sm:pt-14 pb-12 sm:pb-16 bg-[#eceef0] overflow-hidden select-none border-t border-slate-200"
     >
       {/* Section Header */}
-      <div className="max-w-4xl mx-auto px-4 text-center mb-4 sm:mb-6 relative z-20">
+      <div className="max-w-4xl mx-auto px-4 text-center mb-3 sm:mb-4 relative z-20">
         <div className="inline-flex items-center gap-2 justify-center mb-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#f95721]" />
           <span className="text-xs font-bold uppercase tracking-widest text-[#f95721]">
@@ -370,8 +236,14 @@ export default function CampusGallery() {
           Life on campus
         </h2>
         <p className="text-slate-600 text-xs sm:text-sm mt-2 max-w-lg mx-auto">
-          NCC, NSS, sport, the library and the hostel.
+          NCC, NSS, sports, library, laboratories and student vitality.
         </p>
+
+        {/* Interactive Helper Badge */}
+        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-slate-300/80 text-xs text-slate-600 shadow-xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c]" />
+          <span>Click any image to enlarge &amp; highlight · Drag to spin sphere</span>
+        </div>
       </div>
 
       {/* 3D Sphere Interactive Photo Gallery Stage */}
@@ -391,6 +263,18 @@ export default function CampusGallery() {
                   '--item-size-x': item.sx,
                   '--item-size-y': item.sy
                 } as React.CSSProperties}
+                onPointerDown={(e) => {
+                  itemPointerDownRef.current = { x: e.clientX, y: e.clientY, time: Date.now() }
+                }}
+                onPointerUp={(e) => {
+                  const dx = Math.abs(e.clientX - itemPointerDownRef.current.x)
+                  const dy = Math.abs(e.clientY - itemPointerDownRef.current.y)
+                  const dt = Date.now() - itemPointerDownRef.current.time
+                  if (dx < 10 && dy < 10 && dt < 500) {
+                    handleCardClick(idx)
+                  }
+                }}
+                onClick={() => handleCardClick(idx)}
               >
                 <div className="item__image">
                   <img
@@ -407,12 +291,107 @@ export default function CampusGallery() {
 
         <div className="overlay" />
         <div className="overlay overlay--blur" />
-
-        <div ref={viewerRef} className="viewer">
-          <div className="scrim" />
-          <div ref={frameRef} className="frame" />
-        </div>
       </div>
+
+      {/* ================= Lightbox Spotlight Modal: Enlarged & Highlighted ================= */}
+      {selectedImageIndex !== null && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-slate-950/85 backdrop-blur-md animate-fadeIn"
+          onClick={() => setSelectedImageIndex(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Modal Container */}
+          <div
+            className="relative max-w-5xl w-full flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: 'modalPop 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            }}
+          >
+            {/* Top Info Bar */}
+            <div className="w-full flex items-center justify-between pb-3 px-2 sm:px-4 text-white">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#f95721] animate-pulse" />
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-amber-300">
+                  Campus Life Spotlight
+                </span>
+                <span className="text-xs text-slate-300 font-mono ml-2 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15">
+                  Photo {selectedImageIndex + 1} of {sphereItems.length}
+                </span>
+              </div>
+
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedImageIndex(null)}
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 active:scale-95 cursor-pointer border border-white/20 shadow-lg"
+                aria-label="Close photo"
+                title="Close (Esc)"
+              >
+                <X className="w-5 h-5 stroke-[2.5]" />
+              </button>
+            </div>
+
+            {/* Highlighted Image Stage with glowing collegiate border */}
+            <div className="relative w-full flex items-center justify-center">
+              {/* Previous Photo Button */}
+              <button
+                type="button"
+                onClick={handlePrev}
+                className="absolute left-2 sm:-left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/60 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md border border-white/20 shadow-2xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                aria-label="Previous photo"
+                title="Previous (Arrow Left)"
+              >
+                <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
+              </button>
+
+              {/* High-Resolution Centered Image */}
+              <div className="relative max-h-[75vh] sm:max-h-[80vh] rounded-2xl sm:rounded-3xl overflow-hidden bg-black/50 border-2 border-[#ea580c]/60 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_50px_rgba(234,88,12,0.4)]">
+                <img
+                  src={sphereItems[selectedImageIndex].src}
+                  alt={`Life on campus photo ${selectedImageIndex + 1}`}
+                  className="max-h-[75vh] sm:max-h-[80vh] max-w-full w-auto h-auto object-contain block mx-auto transition-transform duration-300"
+                />
+              </div>
+
+              {/* Next Photo Button */}
+              <button
+                type="button"
+                onClick={handleNext}
+                className="absolute right-2 sm:-right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/60 hover:bg-[#ea580c] text-white flex items-center justify-center backdrop-blur-md border border-white/20 shadow-2xl transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                aria-label="Next photo"
+                title="Next (Arrow Right)"
+              >
+                <ChevronRight className="w-6 h-6 stroke-[2.5]" />
+              </button>
+            </div>
+
+            {/* Bottom Keyboard Hint */}
+            <div className="pt-3 text-center text-xs text-slate-300 font-medium">
+              Use <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">←</kbd> <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">→</kbd> to navigate · Press <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-slate-200">Esc</kbd> or click outside to close
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Global CSS for Smooth Modal Animation */}
+      <style>{`
+        @keyframes modalPop {
+          0% {
+            opacity: 0;
+            transform: scale(0.9) translateY(16px);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
     </section>
   )
 }
