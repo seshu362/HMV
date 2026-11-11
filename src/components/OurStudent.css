@@ -708,8 +708,7 @@
   background: url("https://data.whicdn.com/images/86911589/original.jpg");
 }
 .our-student-wrapper .pages_page:nth-of-type(3) .pages_page__inner {
-  background: url("https://iso.500px.com/wp-content/uploads/2014/12/fashion_1.jpg");
-  background-position: 0 0;
+  background: #ffffff;
 }
 .our-student-wrapper .pages_page:nth-of-type(3) .pages_page__inner .content {
   -webkit-clip-path: polygon(0% 0%, 50% 0, 50% 100%, 0% 100%);
@@ -736,8 +735,7 @@
   height: 100%;
   width: 200%;
   position: relative;
-  background: url("https://iso.500px.com/wp-content/uploads/2014/12/fashion_1.jpg");
-  background-size: 1400px !important;
+  background: #1e1b4b;
   left: -100%;
 }
 .our-student-wrapper .pages_page:nth-of-type(5) .pages_page__inner {
@@ -968,8 +966,8 @@
 .our-student-wrapper .pages_page__inner .content_picture {
   width: 220px;
   position: absolute;
-  left: 50%;
-  transform: translateX(-40px);
+  left: calc(50% + 15px);
+  transform: none;
   top: 294px;
 }
 .our-student-wrapper .pages_page__inner .content_picture img {
@@ -1635,7 +1633,9 @@
     line-height: 36px !important;
   }
   .our-student-wrapper .pages_page__inner .content_picture {
-    transform: translateX(-20px) scale(0.85) !important;
+    left: calc(50% + 10px) !important;
+    transform: scale(0.85) !important;
+    transform-origin: left center !important;
   }
 }
 

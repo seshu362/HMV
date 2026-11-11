@@ -199,12 +199,6 @@ export default function AlumniCorner() {
                 <div className="logo">Alumni Corner</div>
                 <div className="pagenumber">2 3</div>
                 <div className="content">
-                  <div className="content_picture">
-                    <img
-                      src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=85"
-                      alt="Ann Mango - BATCH 18-21"
-                    />
-                  </div>
                   <div className="content_offset">
                     <div className="student-stars">★★★★★</div>
                     <h2>Craig Botosh</h2>

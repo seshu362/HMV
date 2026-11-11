@@ -185,12 +185,6 @@ export default function OurStudent() {
                 <div className="logo">Student Experience</div>
                 <div className="pagenumber">2 3</div>
                 <div className="content">
-                  <div className="content_picture">
-                    <img
-                      src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=85"
-                      alt="Craig Botosh - BATCH 20-23"
-                    />
-                  </div>
                   <div className="content_offset">
                     <div className="student-stars">★★★★★</div>
                     <h2>Craig Botosh</h2>
