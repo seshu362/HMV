@@ -26,8 +26,10 @@ export default function CampusGallery() {
   const mainRef = useRef<HTMLDivElement>(null)
   const sphereRef = useRef<HTMLDivElement>(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
+  const selectedRef = useRef<number | null>(null)
+  selectedRef.current = selectedImageIndex
 
-  // 3D Sphere inertia & dragging state
+  // 3D Sphere slow auto-rotation, inertia & gesture dragging state
   useEffect(() => {
     const mainEl = mainRef.current
     const sphereEl = sphereRef.current
@@ -36,13 +38,16 @@ export default function CampusGallery() {
 
     const MAX_POLAR_ROT_DEG = 3
     const PAN_SENSITIVITY = 18
+    const AUTO_ROTATE_SPEED = 0.06 // Gentle, slow cinematic rotation
 
     const state = {
       rotation: { x: 0, y: 0 },
       startRotation: { x: 0, y: 0 },
-      inertiaFrame: null as number | null,
+      animFrame: null as number | null,
       isPointerDown: false,
       hasMoved: false,
+      isHoveringItem: false,
+      isVisible: true,
       startX: 0,
       startY: 0,
       startTime: 0,
@@ -50,7 +55,9 @@ export default function CampusGallery() {
       lastMoveX: 0,
       lastMoveY: 0,
       velocityX: 0,
-      velocityY: 0
+      velocityY: 0,
+      inertiaVx: 0,
+      inertiaVy: 0,
     }
 
     const clamp = (val: number, min: number, max: number) =>
@@ -60,55 +67,55 @@ export default function CampusGallery() {
       sphereEl.style.transform = `translateZ(calc(var(--radius) * -1)) rotateX(${state.rotation.x}deg) rotateY(${state.rotation.y}deg)`
     }
 
-    const stopInertia = () => {
-      if (state.inertiaFrame) {
-        cancelAnimationFrame(state.inertiaFrame)
-        state.inertiaFrame = null
+    // Continuous smooth animation loop: Auto-rotation + Inertia
+    const loop = () => {
+      if (state.isVisible && selectedRef.current === null) {
+        if (state.isPointerDown) {
+          // Manual dragging is handled in handlePointerMove
+        } else if (Math.abs(state.inertiaVx) > 0.05 || Math.abs(state.inertiaVy) > 0.05) {
+          // Smooth inertia flick decay
+          state.inertiaVx *= 0.93
+          state.inertiaVy *= 0.93
+
+          const proposedX = state.rotation.x - state.inertiaVy / 200
+          state.rotation.x = clamp(proposedX, -MAX_POLAR_ROT_DEG, MAX_POLAR_ROT_DEG)
+          state.rotation.y += state.inertiaVx / 200
+          applyTransform()
+        } else {
+          // Idle state: Auto-rotate very slowly so visitors immediately see the 3D sphere
+          if (!state.isHoveringItem) {
+            state.rotation.y = (state.rotation.y + AUTO_ROTATE_SPEED) % 360
+            applyTransform()
+          }
+        }
+      }
+
+      state.animFrame = requestAnimationFrame(loop)
+    }
+
+    state.animFrame = requestAnimationFrame(loop)
+
+    // Pause auto-rotation when hovering directly over a photo card for easy clicking
+    const handlePointerOver = (e: PointerEvent) => {
+      const target = e.target as HTMLElement
+      if (target?.closest('.item')) {
+        state.isHoveringItem = true
       }
     }
 
-    const startInertia = (velocityX: number, velocityY: number) => {
-      let vx = velocityX * 100
-      let vy = velocityY * 100
-
-      const friction = 0.92
-      const minVelocity = 0.1
-      const maxFrames = 120
-      let frameCount = 0
-
-      const step = () => {
-        vx *= friction
-        vy *= friction
-
-        if (Math.abs(vx) < minVelocity && Math.abs(vy) < minVelocity) {
-          state.inertiaFrame = null
-          return
-        }
-
-        const proposedX = state.rotation.x - vy / 200
-        state.rotation.x = clamp(proposedX, -MAX_POLAR_ROT_DEG, MAX_POLAR_ROT_DEG)
-        state.rotation.y += vx / 200
-
-        applyTransform()
-
-        frameCount++
-        if (frameCount > maxFrames) {
-          state.inertiaFrame = null
-          return
-        }
-
-        state.inertiaFrame = requestAnimationFrame(step)
+    const handlePointerOut = (e: PointerEvent) => {
+      const related = e.relatedTarget as HTMLElement | null
+      if (!related || !related.closest('.item')) {
+        state.isHoveringItem = false
       }
-
-      stopInertia()
-      state.inertiaFrame = requestAnimationFrame(step)
     }
 
     // Pointer gesture handlers on sphere stage
     const handlePointerDown = (e: PointerEvent) => {
       state.isPointerDown = true
       state.hasMoved = false
-      stopInertia()
+      state.inertiaVx = 0
+      state.inertiaVy = 0
 
       state.startX = e.clientX
       state.startY = e.clientY
@@ -196,18 +203,35 @@ export default function CampusGallery() {
       }
 
       if (state.hasMoved) {
-        startInertia(state.velocityX, state.velocityY)
+        state.inertiaVx = state.velocityX * 100
+        state.inertiaVy = state.velocityY * 100
       }
     }
 
+    // Only run loop when gallery is visible on screen
+    const observer = new IntersectionObserver(
+      (entries) => {
+        state.isVisible = entries[0].isIntersecting
+      },
+      { threshold: 0.05 }
+    )
+    observer.observe(mainEl)
+
     mainEl.addEventListener('pointerdown', handlePointerDown)
+    mainEl.addEventListener('pointerover', handlePointerOver)
+    mainEl.addEventListener('pointerout', handlePointerOut)
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
     window.addEventListener('pointercancel', handlePointerUp)
 
     return () => {
-      stopInertia()
+      if (state.animFrame) {
+        cancelAnimationFrame(state.animFrame)
+      }
+      observer.disconnect()
       mainEl.removeEventListener('pointerdown', handlePointerDown)
+      mainEl.removeEventListener('pointerover', handlePointerOver)
+      mainEl.removeEventListener('pointerout', handlePointerOut)
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
       window.removeEventListener('pointercancel', handlePointerUp)
@@ -271,7 +295,7 @@ export default function CampusGallery() {
         {/* Interactive Helper Badge */}
         <div className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
-          <span>Click any image to enlarge &amp; highlight · Drag to spin sphere</span>
+          <span>Interactive 3D Sphere · Auto-rotating · Drag to spin · Click any photo to enlarge</span>
         </div>
       </div>
 
