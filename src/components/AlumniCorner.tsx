@@ -102,14 +102,14 @@ export default function AlumniCorner() {
         <div className="inline-flex items-center gap-2 justify-center mb-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#f95721]" />
           <span className="text-xs font-bold uppercase tracking-widest text-[#f95721]">
-            OUR STUDENTS
+            ALUMNI NETWORK
           </span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1e1b4b] tracking-tight">
           Alumni Corner
         </h2>
         <p className="text-slate-600 text-xs sm:text-sm mt-2 max-w-lg mx-auto">
-          Where the 2018–21 batch is working today.
+          Where our distinguished alumni from the 2018–21 batch are leading today.
         </p>
       </div>
 
@@ -196,7 +196,7 @@ export default function AlumniCorner() {
               <div className="pages_page__inner" />
             </div>
 
-            {/* PAGE 3: SPREAD 2-3 (LEFT - ANANYA SHARMA) */}
+            {/* PAGE 3: SPREAD 2-3 (LEFT - POOJA AGARWAL) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="logo">Alumni Corner</div>
@@ -204,11 +204,11 @@ export default function AlumniCorner() {
                 <div className="content">
                   <div className="content_offset">
                     <div className="student-stars">★★★★★</div>
-                    <h2>Ananya Sharma</h2>
+                    <h2>Pooja Agarwal</h2>
                     <p>
-                      BATCH 18–21 · Personal Shopper – Shoppers Stop · "As one of the top institutions
-                      in Hyderabad, Telangana, Hindi Mahavidyalaya shaped me from day one to face the
-                      corporate world with confidence and professional leadership."
+                      BATCH 18–21 · Senior Financial Analyst – Deloitte India · "As an autonomous institution
+                      affiliated with Osmania University, Hindi Mahavidyalaya provided the rigorous analytical
+                      foundation and corporate exposure that empowered me to excel in global corporate finance."
                     </p>
                   </div>
                   <h1
@@ -249,7 +249,7 @@ export default function AlumniCorner() {
               </div>
             </div>
 
-            {/* PAGE 4: SPREAD 2-3 (RIGHT - ANANYA SHARMA) */}
+            {/* PAGE 4: SPREAD 2-3 (RIGHT - POOJA AGARWAL) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="hamburger">
@@ -270,17 +270,17 @@ export default function AlumniCorner() {
                       <span className="quo">
                         <i>"</i>
                       </span>
-                      <span>I feel proud that I was a student of Hindi Mahavidyalaya.</span>
-                      <span>The institute gave me solid knowledge and professional ethics.</span>
-                      <span className="name">Ananya Sharma</span>
-                      <span className="auth">Regional Manager - Reliance Retail · BATCH 18–21 · ★★★★★</span>
+                      <span>I feel immense pride in having graduated from Hindi Mahavidyalaya.</span>
+                      <span>The college instilled rigorous professional ethics and analytical discipline.</span>
+                      <span className="name">Pooja Agarwal</span>
+                      <span className="auth">Senior Financial Analyst – Deloitte India · BATCH 18–21 · ★★★★★</span>
                       <span className="quo">"</span>
                     </h5>
                   </div>
                   <div className="content_picture">
                     <img
                       src={alumniGirl1}
-                      alt="Ananya Sharma - BATCH 18-21"
+                      alt="Pooja Agarwal - BATCH 18-21"
                     />
                   </div>
                   <h1
@@ -315,7 +315,7 @@ export default function AlumniCorner() {
               </div>
             </div>
 
-            {/* PAGE 5: SPREAD 4-5 (LEFT - RAHUL VERMA) */}
+            {/* PAGE 5: SPREAD 4-5 (LEFT - VIKRAMADITYA RAO) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="logo">Alumni Corner</div>
@@ -324,17 +324,17 @@ export default function AlumniCorner() {
                   <div className="content_center">
                     <div className="student-stars">★★★★★</div>
                     <h4>
-                      "Hindi Mahavidyalaya has the most innovative methodology for building the
-                      career of its students. From the time of inception, the team has a clear
-                      mindset to give industries market-ready talent."
+                      "Hindi Mahavidyalaya blends autonomous academic freedom with industry-aligned
+                      technical curriculum. The dedicated faculties continually challenge students to
+                      solve real-world problems and graduate as market-ready tech leaders."
                     </h4>
-                    <h6>Rahul Verma · Sr. HR Manager – Capgemini (BATCH 18–21)</h6>
+                    <h6>Vikramaditya Rao · Lead Data Scientist – Capgemini (BATCH 18–21)</h6>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* PAGE 6: SPREAD 4-5 (RIGHT - RAHUL VERMA SPREAD) */}
+            {/* PAGE 6: SPREAD 4-5 (RIGHT - VIKRAMADITYA RAO SPREAD) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="hamburger">
@@ -346,17 +346,17 @@ export default function AlumniCorner() {
                 <div className="content_centerimage">
                   <img
                     src={alumniBoy1}
-                    alt="Rahul Verma - BATCH 18-21"
+                    alt="Vikramaditya Rao - BATCH 18-21"
                   />
                 </div>
                 <div className="content">
                   <div className="content_center right">
                     <div className="student-stars">★★★★★</div>
                     <h4>
-                      "The campus environment, guest speaker seminars, and corporate drives gave me
-                      the ideal launchpad for multinational human resource leadership."
+                      "The modern computer labs, seminar presentations, and faculty guidance gave me
+                      the analytical confidence to architect enterprise AI solutions at scale."
                     </h4>
-                    <h6>Talent Leadership &amp; Corporate Mentorship · Capgemini</h6>
+                    <h6>AI Systems &amp; Predictive Analytics · Capgemini</h6>
                   </div>
                 </div>
                 <div className="footer">
@@ -375,24 +375,24 @@ export default function AlumniCorner() {
                 <div className="pagenumber">6 7</div>
                 <div className="content">
                   <div className="content_section">
-                    <h2>15,000+ Alumni</h2>
+                    <h2>15,000+ Alumni Network</h2>
                     <p>
-                      BATCH 18–21 &amp; Beyond · Leading in technology, finance, civil services, retail
-                      management, and entrepreneurship across India and international hubs.
+                      BATCH 18–21 &amp; Beyond · Driving innovation across Deloitte, Capgemini, HDFC Bank,
+                      TCS, public services, and entrepreneurial ventures worldwide.
                     </p>
                   </div>
                   <div className="content_section">
-                    <h2>Industry Mentorship</h2>
+                    <h2>Executive Mentorship</h2>
                     <p>
-                      Senior alumni return regularly to conduct mock interviews, resume bootcamps, and
-                      mentorship for graduating students preparing for campus drives.
+                      Senior alumni return each semester to conduct mock technical interviews, resume
+                      workshops, and career mentoring for graduating students.
                     </p>
                   </div>
                   <div className="content_section">
                     <h2>60+ Years Legacy</h2>
                     <p>
-                      Honouring six decades of academic distinction, autonomous university syllabus,
-                      NAAC accreditation, and transformative corporate career journeys.
+                      Honouring six decades of academic distinction, autonomous excellence, NAAC
+                      accreditation, and values-rooted student transformation.
                     </p>
                   </div>
                 </div>
@@ -411,14 +411,14 @@ export default function AlumniCorner() {
                 <div className="content_centerimage">
                   <img
                     src={alumniGirl2}
-                    alt="Kavya Reddy - BATCH 18-21"
+                    alt="Divya Sai Sri - BATCH 18-21"
                   />
                 </div>
                 <div className="content">
                   <div className="content_center right">
                     <div className="student-stars">★★★★★</div>
-                    <h4>"Lifelong connection, global leadership, and transformative alumni success."</h4>
-                    <h6>Kavya Reddy · Hindi Mahavidyalaya Alumni Association</h6>
+                    <h4>"Lifelong connection, values-driven leadership, and proud alumni heritage."</h4>
+                    <h6>Divya Sai Sri · Assistant Vice President, HDFC Bank · Alumni Council</h6>
                   </div>
                 </div>
                 <div className="footer">

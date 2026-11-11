@@ -54,6 +54,7 @@ export default function CampusGallery() {
       lastMoveTime: 0,
       lastMoveX: 0,
       lastMoveY: 0,
+      lastWheelTime: 0,
       velocityX: 0,
       velocityY: 0,
       inertiaVx: 0,
@@ -83,7 +84,9 @@ export default function CampusGallery() {
           applyTransform()
         } else {
           // Idle state: Auto-rotate very slowly so visitors immediately see the 3D sphere
-          if (!state.isHoveringItem) {
+          // Temporarily pause auto-rotation when user is hovering an item or actively two-finger scrolling
+          const isWheeling = performance.now() - state.lastWheelTime < 900
+          if (!state.isHoveringItem && !isWheeling) {
             state.rotation.y = (state.rotation.y + AUTO_ROTATE_SPEED) % 360
             applyTransform()
           }
@@ -94,6 +97,31 @@ export default function CampusGallery() {
     }
 
     state.animFrame = requestAnimationFrame(loop)
+
+    // Two-finger trackpad horizontal scrolling & wheel rotation
+    const handleWheel = (e: WheelEvent) => {
+      const dx = e.deltaX
+      const dy = e.deltaY
+
+      // Trackpad two-finger left/right swipe or Shift + scroll
+      if (Math.abs(dx) > 0.8 || (e.shiftKey && Math.abs(dy) > 0.8)) {
+        const moveX = Math.abs(dx) > 0.8 ? dx : dy
+
+        // Prevent browser horizontal back/forward history swipe when scrolling horizontally
+        if (e.cancelable && Math.abs(dx) >= Math.abs(dy)) {
+          e.preventDefault()
+        }
+
+        state.lastWheelTime = performance.now()
+        state.rotation.y = (state.rotation.y + moveX * 0.16) % 360
+        if (state.rotation.y < 0) state.rotation.y += 360
+
+        // Gentle momentum carry-over
+        state.inertiaVx = moveX * 0.2
+
+        applyTransform()
+      }
+    }
 
     // Pause auto-rotation when hovering directly over a photo card for easy clicking
     const handlePointerOver = (e: PointerEvent) => {
@@ -217,6 +245,7 @@ export default function CampusGallery() {
     )
     observer.observe(mainEl)
 
+    mainEl.addEventListener('wheel', handleWheel, { passive: false })
     mainEl.addEventListener('pointerdown', handlePointerDown)
     mainEl.addEventListener('pointerover', handlePointerOver)
     mainEl.addEventListener('pointerout', handlePointerOut)
@@ -229,6 +258,7 @@ export default function CampusGallery() {
         cancelAnimationFrame(state.animFrame)
       }
       observer.disconnect()
+      mainEl.removeEventListener('wheel', handleWheel)
       mainEl.removeEventListener('pointerdown', handlePointerDown)
       mainEl.removeEventListener('pointerover', handlePointerOver)
       mainEl.removeEventListener('pointerout', handlePointerOut)
@@ -295,7 +325,7 @@ export default function CampusGallery() {
         {/* Interactive Helper Badge */}
         <div className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
-          <span>Interactive 3D Sphere · Auto-rotating · Drag to spin · Click any photo to enlarge</span>
+          <span>Interactive 3D Sphere · Auto-rotating · Two-finger scroll or drag to rotate · Click any photo</span>
         </div>
       </div>
 
