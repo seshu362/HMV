@@ -79,6 +79,7 @@ const slides = [
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const barsRef = useRef<HTMLDivElement>(null)
   const currentRef = useRef(0)
@@ -129,7 +130,7 @@ export default function HeroSection() {
 
     // 1. Current text floats up and fades (with 3D hardware transform)
     if (currentTitle) {
-      tl.to(currentTitle, { y: -30, opacity: 0, duration: 0.3, ease: 'power2.in', force3D: true }, 0)
+      tl.to(currentTitle, { y: -40, opacity: 0, duration: 0.4, ease: 'power2.in', force3D: true }, 0)
     }
 
     // 2. Bars go DOWN one by one from the top (scaleY 0 -> 1, GPU accelerated)
@@ -138,15 +139,15 @@ export default function HeroSection() {
       bars,
       {
         scaleY: 1,
-        duration: 0.45,
-        ease: 'power3.inOut',
-        stagger: 0.035,
+        duration: 0.7,
+        ease: 'power4.inOut',
+        stagger: 0.065,
         force3D: true
       },
-      0.02
+      0.04
     )
 
-    // 3. At apex when screen is 100% covered: swap the slides cleanly without CSS transition delay
+    // 3. At apex when screen is 100% black: swap the slides cleanly without CSS transition delay
     tl.call(() => {
       slideEls?.forEach((s, idx) => {
         const el = s as HTMLElement
@@ -158,17 +159,17 @@ export default function HeroSection() {
       currentRef.current = targetIndex
     })
 
-    // 4. Brief hold so new photo is completely rendered with zero seam
-    tl.to({}, { duration: 0.04 })
+    // 4. Brief 50ms hold so new photo is completely rendered with zero seam
+    tl.to({}, { duration: 0.05 })
 
     // 5. Bars COME UP one by one to reveal the new slide (scaleY 1 -> 0 from top)
     tl.to(
       bars,
       {
         scaleY: 0,
-        duration: 0.45,
-        ease: 'power3.inOut',
-        stagger: 0.035,
+        duration: 0.7,
+        ease: 'power4.inOut',
+        stagger: 0.065,
         force3D: true
       }
     )
@@ -177,22 +178,22 @@ export default function HeroSection() {
     if (targetTitle) {
       tl.fromTo(
         targetTitle,
-        { y: 35, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', force3D: true },
-        '-=0.3'
+        { y: 45, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', force3D: true },
+        '-=0.4'
       )
     }
   }, [])
 
-  // Auto slide interval: Rotates reliably every 3 seconds
+  // Auto slide interval (4 seconds per banner, pauses on hover)
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (isPaused) return
+    const interval = setInterval(() => {
       const nextIndex = (currentRef.current + 1) % slides.length
       triggerSlide(nextIndex)
-    }, 3000)
-
-    return () => clearTimeout(timer)
-  }, [current, triggerSlide])
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [isPaused, triggerSlide])
 
   const handlePrev = () => {
     const prevIndex = currentRef.current === 0 ? slides.length - 1 : currentRef.current - 1
@@ -208,6 +209,8 @@ export default function HeroSection() {
     <section
       id="hero"
       ref={containerRef}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
       className="relative w-full h-[calc(100vh-125px)] min-h-[580px] flex items-center justify-center overflow-hidden bg-[#111] select-none text-white"
     >
       {/* 1. Slideshow Container */}

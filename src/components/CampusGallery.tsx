@@ -25,6 +25,7 @@ const sphereItems = (sphereCoords as SphereCoord[]).map((coord, idx) => ({
 export default function CampusGallery() {
   const mainRef = useRef<HTMLDivElement>(null)
   const sphereRef = useRef<HTMLDivElement>(null)
+  const rotateRef = useRef<((deltaDeg: number) => void) | null>(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const selectedRef = useRef<number | null>(null)
   selectedRef.current = selectedImageIndex
@@ -37,8 +38,9 @@ export default function CampusGallery() {
     if (!mainEl || !sphereEl) return
 
     const MAX_POLAR_ROT_DEG = 3
-    const PAN_SENSITIVITY = 18
-    const AUTO_ROTATE_SPEED = 0.06 // Gentle, slow cinematic rotation
+    const PAN_SENSITIVITY = 38 // Calm, smooth drag sensitivity (prevents fast jumps)
+    // Extremely slow, gentle, peaceful rotation: ~1.4 degrees per second (full 360° takes ~257 seconds)
+    const AUTO_ROTATE_DEG_PER_SEC = 1.4
 
     const state = {
       rotation: { x: 0, y: 0 },
@@ -54,11 +56,12 @@ export default function CampusGallery() {
       lastMoveTime: 0,
       lastMoveX: 0,
       lastMoveY: 0,
-      lastWheelTime: 0,
       velocityX: 0,
       velocityY: 0,
       inertiaVx: 0,
       inertiaVy: 0,
+      lastFrameTime: performance.now(),
+      lastInteractionTime: 0
     }
 
     const clamp = (val: number, min: number, max: number) =>
@@ -68,26 +71,36 @@ export default function CampusGallery() {
       sphereEl.style.transform = `translateZ(calc(var(--radius) * -1)) rotateX(${state.rotation.x}deg) rotateY(${state.rotation.y}deg)`
     }
 
-    // Continuous smooth animation loop: Auto-rotation + Inertia
+    // Expose smooth step rotation to external buttons
+    rotateRef.current = (deltaDeg: number) => {
+      state.lastInteractionTime = performance.now()
+      state.inertiaVx = clamp(deltaDeg * 1.5, -14, 14)
+    }
+
+    // Continuous smooth animation loop: Auto-rotation + Inertia with delta-time normalization
     const loop = () => {
+      const now = performance.now()
+      const dt = Math.min((now - state.lastFrameTime) / 1000, 0.1) // Cap at 100ms
+      state.lastFrameTime = now
+
       if (state.isVisible && selectedRef.current === null) {
         if (state.isPointerDown) {
           // Manual dragging is handled in handlePointerMove
-        } else if (Math.abs(state.inertiaVx) > 0.05 || Math.abs(state.inertiaVy) > 0.05) {
-          // Smooth inertia flick decay
-          state.inertiaVx *= 0.93
-          state.inertiaVy *= 0.93
+        } else if (Math.abs(state.inertiaVx) > 0.02 || Math.abs(state.inertiaVy) > 0.02) {
+          // Soft, gentle inertia decay (glides smoothly to a stop, never spins wildly)
+          state.inertiaVx *= 0.94
+          state.inertiaVy *= 0.94
 
-          const proposedX = state.rotation.x - state.inertiaVy / 200
+          const proposedX = state.rotation.x - state.inertiaVy * 0.05
           state.rotation.x = clamp(proposedX, -MAX_POLAR_ROT_DEG, MAX_POLAR_ROT_DEG)
-          state.rotation.y += state.inertiaVx / 200
+          state.rotation.y = (state.rotation.y + state.inertiaVx * 0.05) % 360
+          if (state.rotation.y < 0) state.rotation.y += 360
           applyTransform()
         } else {
-          // Idle state: Auto-rotate very slowly so visitors immediately see the 3D sphere
-          // Temporarily pause auto-rotation when user is hovering an item or actively two-finger scrolling
-          const isWheeling = performance.now() - state.lastWheelTime < 900
-          if (!state.isHoveringItem && !isWheeling) {
-            state.rotation.y = (state.rotation.y + AUTO_ROTATE_SPEED) % 360
+          // Idle state: Auto-rotate very slowly so photos are easy and enjoyable to view
+          const isInteractingRecently = now - state.lastInteractionTime < 1600
+          if (!state.isHoveringItem && !isInteractingRecently) {
+            state.rotation.y = (state.rotation.y + AUTO_ROTATE_DEG_PER_SEC * dt) % 360
             applyTransform()
           }
         }
@@ -96,29 +109,31 @@ export default function CampusGallery() {
       state.animFrame = requestAnimationFrame(loop)
     }
 
+    state.lastFrameTime = performance.now()
     state.animFrame = requestAnimationFrame(loop)
 
-    // Two-finger trackpad horizontal scrolling & wheel rotation
+    // Two-finger trackpad horizontal scrolling & gentle wheel rotation
     const handleWheel = (e: WheelEvent) => {
       const dx = e.deltaX
       const dy = e.deltaY
 
       // Trackpad two-finger left/right swipe or Shift + scroll
-      if (Math.abs(dx) > 0.8 || (e.shiftKey && Math.abs(dy) > 0.8)) {
-        const moveX = Math.abs(dx) > 0.8 ? dx : dy
+      if (Math.abs(dx) > 1 || (e.shiftKey && Math.abs(dy) > 1)) {
+        const moveX = Math.abs(dx) > 1 ? dx : dy
 
-        // Prevent browser horizontal back/forward history swipe when scrolling horizontally
+        // Prevent browser horizontal back/forward history navigation
         if (e.cancelable && Math.abs(dx) >= Math.abs(dy)) {
           e.preventDefault()
         }
 
-        state.lastWheelTime = performance.now()
-        state.rotation.y = (state.rotation.y + moveX * 0.16) % 360
+        state.lastInteractionTime = performance.now()
+        // Slow, controlled rotation step per wheel event
+        const step = clamp(moveX * 0.035, -1.8, 1.8)
+        state.rotation.y = (state.rotation.y + step) % 360
         if (state.rotation.y < 0) state.rotation.y += 360
 
         // Gentle momentum carry-over
-        state.inertiaVx = moveX * 0.2
-
+        state.inertiaVx = clamp(moveX * 0.12, -7, 7)
         applyTransform()
       }
     }
@@ -231,8 +246,10 @@ export default function CampusGallery() {
       }
 
       if (state.hasMoved) {
-        state.inertiaVx = state.velocityX * 100
-        state.inertiaVy = state.velocityY * 100
+        // Firmly clamp release inertia to prevent sudden high-speed spinning
+        state.inertiaVx = clamp(state.velocityX * 16, -14, 14)
+        state.inertiaVy = clamp(state.velocityY * 16, -2, 2)
+        state.lastInteractionTime = performance.now()
       }
     }
 
@@ -240,6 +257,9 @@ export default function CampusGallery() {
     const observer = new IntersectionObserver(
       (entries) => {
         state.isVisible = entries[0].isIntersecting
+        if (state.isVisible) {
+          state.lastFrameTime = performance.now()
+        }
       },
       { threshold: 0.05 }
     )
@@ -258,6 +278,7 @@ export default function CampusGallery() {
         cancelAnimationFrame(state.animFrame)
       }
       observer.disconnect()
+      rotateRef.current = null
       mainEl.removeEventListener('wheel', handleWheel)
       mainEl.removeEventListener('pointerdown', handlePointerDown)
       mainEl.removeEventListener('pointerover', handlePointerOver)
@@ -302,6 +323,12 @@ export default function CampusGallery() {
     )
   }, [])
 
+  const rotateGallery = (direction: 'left' | 'right') => {
+    if (rotateRef.current) {
+      rotateRef.current(direction === 'left' ? -12 : 12)
+    }
+  }
+
   return (
     <section
       id="life-on-campus"
@@ -325,12 +352,34 @@ export default function CampusGallery() {
         {/* Interactive Helper Badge */}
         <div className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
-          <span>Interactive 3D Sphere · Auto-rotating · Two-finger scroll or drag to rotate · Click any photo</span>
+          <span>Interactive 3D Sphere · Gentle Auto-Rotation · Drag or use buttons to rotate · Click any photo</span>
         </div>
       </div>
 
       {/* 3D Sphere Interactive Photo Gallery Stage */}
-      <div ref={mainRef} className="campus-gallery-stage">
+      <div ref={mainRef} className="campus-gallery-stage relative">
+        {/* Floating Left / Right Smooth Rotation Buttons */}
+        <div className="absolute inset-x-3 sm:inset-x-8 top-1/2 -translate-y-1/2 z-30 flex items-center justify-between pointer-events-none">
+          <button
+            type="button"
+            onClick={() => rotateGallery('left')}
+            className="pointer-events-auto w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/90 hover:bg-[#ea580c] text-slate-800 hover:text-white flex items-center justify-center shadow-xl border border-slate-200/90 transition-all hover:scale-110 active:scale-95 cursor-pointer backdrop-blur-md"
+            aria-label="Rotate gallery left"
+            title="Rotate gallery left"
+          >
+            <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
+          </button>
+          <button
+            type="button"
+            onClick={() => rotateGallery('right')}
+            className="pointer-events-auto w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/90 hover:bg-[#ea580c] text-slate-800 hover:text-white flex items-center justify-center shadow-xl border border-slate-200/90 transition-all hover:scale-110 active:scale-95 cursor-pointer backdrop-blur-md"
+            aria-label="Rotate gallery right"
+            title="Rotate gallery right"
+          >
+            <ChevronRight className="w-6 h-6 stroke-[2.5]" />
+          </button>
+        </div>
+
         <div className="stage">
           <div ref={sphereRef} className="sphere">
             {sphereItems.map((item, idx) => (
