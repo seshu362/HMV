@@ -349,11 +349,7 @@ export default function CampusGallery() {
           NCC, NSS, sports, library, laboratories and student vitality.
         </p>
 
-        {/* Interactive Helper Badge */}
-        <div className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
-          <span>Interactive 3D Sphere · Gentle Auto-Rotation · Drag or use buttons to rotate · Click any photo</span>
-        </div>
+
       </div>
 
       {/* 3D Sphere Interactive Photo Gallery Stage */}
