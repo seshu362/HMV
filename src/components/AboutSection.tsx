@@ -1,372 +1,291 @@
-import { useState } from 'react'
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ArrowRight, BookOpen, Shield, Users } from 'lucide-react'
+import banner001 from '@/assets/Banners/Banner001.jpg'
+import about1 from '@/assets/About/0002.jpeg'
+import about2 from '@/assets/About/0006.jpeg'
 
-// Authentic Hindi Mahavidyalaya leadership and convocation imagery
-import aboutPrincipal1 from '../assets/About/IMG_0667.jpeg'
-import aboutPrincipal2 from '../assets/About/DrBalaKumar.jpeg'
-import aboutProcession from '../assets/About/0002.jpeg'
-import aboutJyoti from '../assets/About/0006.jpeg'
-import aboutSpeech from '../assets/About/0007-2.jpeg'
-import aboutMemento from '../assets/About/0008.jpeg'
-import aboutDegree from '../assets/About/0014.jpeg'
-import aboutGroup from '../assets/About/0030.jpeg'
+gsap.registerPlugin(ScrollTrigger)
 
-// Authentic collegiate campus banners for secondary stacks
-import banner1 from '../assets/Banners/banner1.jpg'
-import banner3 from '../assets/Banners/banner3.jpg'
-import banner4 from '../assets/Banners/banner4.jpg'
-import banner5 from '../assets/Banners/banner5.jpg'
-import banner6 from '../assets/Banners/banner6.jpg'
-import banner7 from '../assets/Banners/banner7.jpg'
-import banner8 from '../assets/Banners/banner8.jpg'
-
-// 3 Curated card groups with 100% authentic Hindi Mahavidyalaya imagery
-const cardGroupsData = [
-  {
-    index: 0,
-    title: 'Leadership & Academic Convocation',
-    // Alternating Little cards (1, 3, 5, 7) and Big cards (2, 4, 6, 8)
-    // First Big Card (index 1) displays IMG_0667.jpeg (Principal Dr. Bala Kumar) in front
-    cards: [
-      { type: 'little', image: aboutJyoti },
-      { type: 'big', image: aboutPrincipal1 }, // IMG_0667.jpeg - Displayed first in front
-      { type: 'little', image: aboutMemento },
-      { type: 'big', image: aboutPrincipal2 }, // DrBalaKumar.jpeg
-      { type: 'little', image: aboutProcession },
-      { type: 'big', image: aboutDegree },     // 0014.jpeg
-      { type: 'little', image: aboutSpeech },
-      { type: 'big', image: aboutGroup },      // 0030.jpeg
-    ],
-  },
-  {
-    index: 1,
-    title: 'Campus Heritage & Leadership',
-    cards: [
-      { type: 'little', image: aboutProcession },
-      { type: 'big', image: banner1 },
-      { type: 'little', image: aboutJyoti },
-      { type: 'big', image: banner3 },
-      { type: 'little', image: aboutMemento },
-      { type: 'big', image: banner8 },
-      { type: 'little', image: aboutSpeech },
-      { type: 'big', image: aboutPrincipal1 },
-    ],
-  },
-  {
-    index: 2,
-    title: 'Student Life, Sports & Culture',
-    cards: [
-      { type: 'little', image: aboutDegree },
-      { type: 'big', image: banner5 },
-      { type: 'little', image: aboutGroup },
-      { type: 'big', image: banner6 },
-      { type: 'little', image: aboutMemento },
-      { type: 'big', image: banner7 },
-      { type: 'little', image: aboutJyoti },
-      { type: 'big', image: banner4 },
-    ],
-  },
+const facts = [
+  { icon: BookOpen, value: '60+', label: 'Years of Legacy' },
+  { icon: Users, value: '40,000+', label: 'Alumni Worldwide' },
+  { icon: Shield, value: 'NAAC', label: 'Accredited' },
 ]
 
 export default function AboutSection() {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [statuses, setStatuses] = useState<Record<number, string>>({
-    0: 'active',
-    1: 'unknown',
-    2: 'unknown',
-  })
+  const sectionRef = useRef<HTMLElement>(null)
+  const textRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLDivElement>(null)
+  const factsRef = useRef<HTMLDivElement>(null)
 
-  // Next stack transition
-  const handleNext = () => {
-    const nextIndex = activeIndex + 1 <= cardGroupsData.length - 1 ? activeIndex + 1 : 0
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Text slides in from left
+      gsap.fromTo(
+        textRef.current,
+        { opacity: 0, x: -50 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 75%',
+            once: true,
+          },
+        }
+      )
 
-    setStatuses((prev) => ({
-      ...prev,
-      [activeIndex]: 'after',
-      [nextIndex]: 'becoming-active-from-before',
-    }))
+      // Image reveals with clip-path
+      gsap.fromTo(
+        imgRef.current,
+        { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
+        {
+          clipPath: 'inset(0 0% 0 0)',
+          opacity: 1,
+          duration: 1.1,
+          ease: 'power3.inOut',
+          delay: 0.2,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 75%',
+            once: true,
+          },
+        }
+      )
 
-    setTimeout(() => {
-      setStatuses((prev) => ({
-        ...prev,
-        [nextIndex]: 'active',
-      }))
-      setActiveIndex(nextIndex)
-    }, 20)
-  }
+      // Facts stagger
+      gsap.fromTo(
+        factsRef.current?.children ?? [],
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.12,
+          duration: 0.6,
+          ease: 'power3.out',
+          delay: 0.4,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 70%',
+            once: true,
+          },
+        }
+      )
+    }, sectionRef)
 
-  // Previous stack transition
-  const handlePrev = () => {
-    const nextIndex = activeIndex - 1 >= 0 ? activeIndex - 1 : cardGroupsData.length - 1
+    return () => ctx.revert()
+  }, [])
 
-    setStatuses((prev) => ({
-      ...prev,
-      [activeIndex]: 'before',
-      [nextIndex]: 'becoming-active-from-after',
-    }))
-
-    setTimeout(() => {
-      setStatuses((prev) => ({
-        ...prev,
-        [nextIndex]: 'active',
-      }))
-      setActiveIndex(nextIndex)
-    }, 20)
+  const scrollTo = (href: string) => {
+    const el = document.getElementById(href.replace('#', ''))
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
     <section
       id="about"
-      className="relative z-30 w-full bg-white pt-12 sm:pt-16 lg:pt-20 pb-6 sm:pb-8 lg:pb-10 overflow-visible border-t border-slate-100"
+      ref={sectionRef}
+      style={{
+        background: 'var(--brand-cream, #fdf8f3)',
+        padding: 'clamp(2rem, 3.5vw, 2.75rem) clamp(1.25rem, 4vw, 2rem)',
+        fontFamily: 'Inter, sans-serif',
+        overflow: 'hidden',
+      }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 overflow-visible">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center overflow-visible">
-          
-          {/* ================= LEFT COLUMN: Typography & Content ================= */}
-          <div className="lg:col-span-6 flex flex-col items-start pr-0 lg:pr-6 z-10">
-            {/* Tag pill: Orange bullet + ABOUT US */}
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#ea580c] shrink-0" />
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#ea580c]">
-                ABOUT US
-              </span>
+      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))',
+            gap: 'clamp(2.5rem, 5vw, 5rem)',
+            alignItems: 'center',
+          }}
+        >
+          {/* LEFT — Text Content */}
+          <div ref={textRef} style={{ opacity: 0 }}>
+            <div className="section-label" style={{ marginBottom: '1.25rem' }}>
+              About the Institution
             </div>
 
-            {/* Main Title matching Figma */}
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1e1b4b] tracking-tight leading-[1.15] mb-6">
-              A college of Hindi, learning and life
+            <h2
+              style={{
+                fontFamily: 'Playfair Display, Georgia, serif',
+                fontWeight: 800,
+                fontSize: 'clamp(2rem, 4vw, 3.2rem)',
+                lineHeight: 1.1,
+                letterSpacing: '-0.02em',
+                color: 'var(--brand-navy, #1e1b4b)',
+                marginBottom: '1.5rem',
+              }}
+            >
+              A Legacy Built on
+              <br />
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #ea580c 0%, #f97316 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Trust & Excellence
+              </span>
             </h2>
 
-            {/* Description Paragraph matching Figma */}
-            <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed mb-8 max-w-xl">
-              Founded in 1961, Hindi Mahavidyalaya is an autonomous, NAAC re-accredited
-              college affiliated to Osmania University. Our students learn in digital
-              classrooms and build skills in debate, leadership and enterprise.
+            <p
+              style={{
+                color: '#475569',
+                fontSize: 'clamp(0.9rem, 1.3vw, 1rem)',
+                lineHeight: 1.75,
+                marginBottom: '1.1rem',
+              }}
+            >
+              Hindi Mahavidyalaya (HMV) has been a cornerstone of higher education in Hyderabad
+              since 1965. Affiliated to Osmania University and accredited by NAAC, HMV offers a
+              rich academic ecosystem that blends traditional values with contemporary pedagogy.
             </p>
 
-            {/* Read our story Button */}
-            <a
-              href="#story"
-              className="px-6 py-2.5 sm:px-7 sm:py-3 rounded-full border border-slate-900 bg-white hover:bg-slate-900 text-slate-900 hover:text-white font-semibold text-sm sm:text-base tracking-wide transition-all shadow-sm hover:shadow-md cursor-pointer inline-flex items-center gap-2 group"
+            <p
+              style={{
+                color: '#475569',
+                fontSize: 'clamp(0.9rem, 1.3vw, 1rem)',
+                lineHeight: 1.75,
+                marginBottom: '2rem',
+              }}
             >
-              <span>Read our story</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </a>
-          </div>
+              Our institution stands as a beacon for aspiring students seeking quality education
+              with practical industry orientation. With an autonomous syllabus and expert faculty,
+              we prepare graduates who lead organizations, drive innovation, and shape communities.
+            </p>
 
-          {/* ================= RIGHT COLUMN: Exact Card Swiper Component ================= */}
-          <div className="lg:col-span-6 relative z-30 flex flex-col items-center justify-center pt-4 pb-2 sm:pt-6 sm:pb-4 overflow-visible">
-            
-            {/* Card Swiper Container */}
-            <div className="card-swiper relative z-30 w-full flex flex-col items-center justify-center overflow-visible">
-              
-              {/* Groups Stack Container */}
-              <div className="card-groups relative z-30 w-[240px] sm:w-[280px] md:w-[300px] aspect-[5/7] overflow-visible">
-                {cardGroupsData.map((group) => {
-                  const status = statuses[group.index] || 'unknown'
-
-                  return (
-                    <div
-                      key={group.index}
-                      data-index={group.index}
-                      data-status={status}
-                      className="card-group absolute top-0 left-0 w-full h-full aspect-[5/7] overflow-visible"
-                    >
-                      {/* 8 Cards in Exact Alternating Little (1, 3, 5, 7) and Big (2, 4, 6, 8) Order */}
-                      {group.cards.map((c, cIdx) => (
-                        <div
-                          key={cIdx}
-                          className={`card ${c.type === 'big' ? 'big-card' : 'little-card'}`}
-                          style={{ backgroundImage: `url("${c.image}")` }}
-                        />
-                      ))}
+            {/* Key Facts */}
+            <div
+              ref={factsRef}
+              style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '2.25rem' }}
+            >
+              {facts.map(({ icon: Icon, value, label }) => (
+                <div
+                  key={label}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    background: '#fff',
+                    border: '1.5px solid rgba(234,88,12,0.12)',
+                    borderRadius: '12px',
+                    padding: '0.85rem 1.1rem',
+                    minWidth: '130px',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+                    opacity: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '38px',
+                      height: '38px',
+                      borderRadius: '10px',
+                      background: 'rgba(234,88,12,0.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Icon size={18} color="#ea580c" />
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 800, fontSize: '1.3rem', color: '#1e1b4b', lineHeight: 1 }}>
+                      {value}
                     </div>
-                  )
-                })}
-              </div>
-
-              {/* Swiper Buttons: Only Left & Right Arrows, No Numbers */}
-              <div className="card-swiper-buttons relative z-40 mt-12 sm:mt-14 flex items-center justify-center gap-5">
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  aria-label="Previous card stack"
-                  className="w-12 h-12 rounded-full border-2 border-slate-300 hover:border-[#ea580c] bg-white text-slate-700 hover:text-[#ea580c] flex items-center justify-center shadow-md hover:scale-110 active:scale-95 transition-all cursor-pointer"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  aria-label="Next card stack"
-                  className="w-12 h-12 rounded-full border-2 border-slate-300 hover:border-[#ea580c] bg-white text-slate-700 hover:text-[#ea580c] flex items-center justify-center shadow-md hover:scale-110 active:scale-95 transition-all cursor-pointer"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-
+                    <div style={{ fontSize: '0.65rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '2px' }}>
+                      {label}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
+            <button
+              onClick={() => scrollTo('#programmes')}
+              className="btn-primary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              Explore Programmes
+              <ArrowRight size={15} />
+            </button>
           </div>
 
+          {/* RIGHT — Image Showcase */}
+          <div ref={imgRef} style={{ opacity: 0 }} className="relative w-full">
+            {/* Main Image Card Container */}
+            <div
+              className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-white"
+              style={{
+                boxShadow: '0 25px 60px -15px rgba(30, 27, 75, 0.18)',
+              }}
+            >
+              {/* Main Entrance Image */}
+              <div className="relative aspect-[16/11] sm:aspect-[4/3] w-full overflow-hidden bg-slate-100">
+                <img
+                  src={banner001}
+                  alt="Hindi Mahavidyalaya Main Campus Entrance"
+                  className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
+                />
+                {/* Subtle gradient vignette at bottom for readability of badges */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/10 pointer-events-none" />
+
+                {/* Top-Right Badge: NAAC Accredited */}
+                <div className="absolute top-4 right-4 sm:top-5 sm:right-5 bg-white/90 backdrop-blur-md text-[#1e1b4b] px-3.5 py-1.5 rounded-full text-xs font-bold border border-white/60 flex items-center gap-2 shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
+                  <span>NAAC Accredited Campus</span>
+                </div>
+
+                {/* Top-Left Badge: Founded 1965 */}
+                <div className="absolute top-4 left-4 sm:top-5 sm:left-5 bg-[#1e1b4b]/90 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-lg">
+                  <span className="text-[#f97316]">Estd.</span>
+                  <span>1965</span>
+                </div>
+
+                {/* Bottom Overlay: Institutional Milestone Card */}
+                <div className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5 bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-2xl border border-white/80 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#ea580c] to-[#c2410c] flex flex-col items-center justify-center text-white font-extrabold flex-shrink-0 shadow-md shadow-orange-600/30">
+                      <span className="text-base leading-none">60+</span>
+                      <span className="text-[9px] uppercase tracking-wider font-semibold opacity-90">Years</span>
+                    </div>
+                    <div>
+                      <h4 className="text-sm sm:text-base font-bold text-[#1e1b4b] leading-tight">
+                        Diamond Jubilee Legacy
+                      </h4>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">
+                        Arts, Commerce, Science &amp; Management Campus
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Supporting authentic photo avatars */}
+                  <div className="hidden sm:flex items-center -space-x-2.5 flex-shrink-0">
+                    <img
+                      src={about1}
+                      alt="Academic Procession"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
+                    />
+                    <img
+                      src={about2}
+                      alt="Campus Traditions"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Embedded CSS for 100% Exact Hyperplexed Card Swiper Effect */}
-      <style>{`
-        .card-swiper,
-        .card-groups,
-        .card-group {
-          overflow: visible !important;
-        }
-
-        .card-groups,
-        .card-group,
-        .card {
-          aspect-ratio: 5 / 7;
-        }
-
-        .card-group {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          transition: transform 400ms ease;
-          z-index: 20;
-        }
-
-        .card-group[data-status="unknown"] {
-          transform: scale(0);
-          transition: none;
-        }
-
-        .card-group[data-status="active"] {
-          transition-delay: 300ms;
-          transform: scale(1);
-          z-index: 25;
-        }
-
-        .card-group[data-status="after"] {
-          transform: translateX(50%) scale(0);
-        }
-
-        .card-group[data-status="before"] {
-          transform: translateX(-50%) scale(0);
-        }
-
-        .card-group[data-status="becoming-active-from-after"] {
-          transform: translateX(50%) scale(0);
-          transition: none;
-        }
-
-        .card-group[data-status="becoming-active-from-before"] {
-          transform: translateX(-50%) scale(0);
-          transition: none;
-        }
-
-        .card {
-          background-color: rgba(255, 255, 255, 0.05);
-          position: absolute;
-          transition: transform 800ms cubic-bezier(.05,.43,.25,.95);
-          background-position: center;
-          background-size: cover;
-          box-shadow: -1vmin 1vmin 2vmin rgba(0, 0, 0, 0.25);
-        }
-
-        .big-card {
-          width: 100%;
-          height: 100%;
-          border-radius: 1.25rem;
-          border: 4px solid white;
-        }
-
-        .little-card {
-          width: 38%;
-          height: 38%;
-          border-radius: 1rem;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%) scale(0);
-          opacity: 0;
-          box-shadow: -1vmin 1vmin 2vmin rgba(0, 0, 0, 0.25);
-          pointer-events: none;
-          border: 3px solid white;
-          z-index: 20;
-          transition: transform 800ms cubic-bezier(.05,.43,.25,.95), opacity 300ms ease;
-        }
-
-        .card-group:hover > .little-card {
-          opacity: 1;
-          pointer-events: auto;
-          z-index: 30;
-        }
-
-        /* Hovering any individual image card brings it completely to the front with full z-index */
-        .card-group .card:hover {
-          z-index: 60 !important;
-          cursor: pointer;
-        }
-
-        /* 100% Exact Hyperplexed Resting Rotations - First Big Card (:nth-child(2)) is the frontmost visible card */
-        .card-group > .big-card:nth-child(2) {
-          transform: translateX(-10%) rotate(-1deg);
-          z-index: 5;
-        }
-
-        .card-group > .big-card:nth-child(4) {
-          transform: rotate(2deg);
-          z-index: 4;
-        }
-
-        .card-group > .big-card:nth-child(6) {
-          transform: translateX(-6%) rotate(-3deg);
-          z-index: 3;
-        }
-
-        .card-group > .big-card:nth-child(8) {
-          transform: translate(10%, 3%) rotate(5deg);
-          z-index: 2;
-        }
-
-        /* 100% Exact Hyperplexed Hover Fan-out Effects */
-        .card-group:hover > .card {  
-          box-shadow: -2vmin 2vmin 3vmin rgba(0, 0, 0, 0.4);
-        }
-
-        .card-group:hover > .big-card:nth-child(2) {
-          transform: translate(-75%, 16%) rotate(-24deg);
-        }
-
-        .card-group:hover > .big-card:nth-child(4) {
-          transform: translate(-25%, 8%) rotate(-8deg);
-        }
-
-        .card-group:hover > .big-card:nth-child(6) {
-          transform: translate(25%, 8%) rotate(8deg);
-        }
-
-        .card-group:hover > .big-card:nth-child(8) {
-          transform: translate(75%, 16%) rotate(24deg);
-        }
-
-        .card-group:hover > .little-card:nth-child(1) {
-          transform: translate(200%, -160%) rotate(-15deg);
-        }
-
-        .card-group:hover > .little-card:nth-child(3) {
-          transform: translate(160%, 170%) rotate(15deg);
-        }
-
-        .card-group:hover > .little-card:nth-child(5) {
-          transform: translate(-200%, -170%) rotate(15deg);
-        }
-
-        .card-group:hover > .little-card:nth-child(7) {
-          transform: translate(-280%, 140%) rotate(-15deg);
-        }
-      `}</style>
     </section>
   )
 }

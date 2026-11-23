@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:new": "vite new_HMV",
     "build": "tsc -b && vite build",
+    "build:new": "cd new_HMV && npm run build",
     "lint": "oxlint",
     "preview": "vite preview"
   },

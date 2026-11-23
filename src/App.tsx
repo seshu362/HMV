@@ -30,6 +30,9 @@ export default function App() {
       smoothWheel: true,
     })
 
+    // Expose Lenis instance globally so components can trigger smooth programmatic scroll without conflicts
+    ;(window as unknown as { __lenis?: Lenis }).__lenis = lenis
+
     let animationFrameId: number
 
     function raf(time: number) {
@@ -42,11 +45,12 @@ export default function App() {
     return () => {
       cancelAnimationFrame(animationFrameId)
       lenis.destroy()
+      delete (window as unknown as { __lenis?: Lenis }).__lenis
     }
   }, [])
 
   return (
-    <div className="min-h-screen w-full bg-white text-[#111827] flex flex-col font-sans antialiased overflow-x-hidden selection:bg-[#ea580c]/20 selection:text-[#ea580c]">
+    <div className="min-h-screen w-full bg-white text-[#111827] flex flex-col font-sans antialiased overflow-x-clip selection:bg-[#ea580c]/20 selection:text-[#ea580c]">
       {/* 1. Official Announcement Ticker & Accreditation Bar */}
       <TopHeader />
 

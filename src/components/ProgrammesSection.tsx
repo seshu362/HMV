@@ -1,268 +1,454 @@
-import { useState } from 'react'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, BookOpen } from 'lucide-react'
 
-// 4 Official streams matching Figma reference 100%
-const programmesData = [
+// Authentic collegiate banner imagery for all programmes
+import banner001 from '@/assets/Banners/Banner001.jpg'
+import banner002 from '@/assets/Banners/Banner002.jpg'
+import banner003 from '@/assets/Banners/Banner003.jpg'
+import banner4 from '@/assets/Banners/banner4.jpg'
+import banner5 from '@/assets/Banners/banner5.jpg'
+import banner6 from '@/assets/Banners/banner6.jpg'
+import banner7 from '@/assets/Banners/banner7.jpg'
+import banner8 from '@/assets/Banners/banner8.jpg'
+import aboutMemento from '@/assets/About/0008.jpeg'
+import aboutDegree from '@/assets/About/0014.jpeg'
+import aboutSpeech from '@/assets/About/0007-2.jpeg'
+
+interface ProgrammeItem {
+  id: number
+  title: string
+  stream: string
+  level: string
+  courses: string
+  tagline: string
+  image: string
+  accentColor: string
+}
+
+const programmesList: ProgrammeItem[] = [
   {
     id: 1,
-    title: 'Commerce and management',
-    courses: 'B.Com | BBA | M.Com | MBA',
-    btnLabel: 'See Commerce courses',
-    accent: '#26114d',
-    lightAccent: '#3b1d75',
+    title: 'B.Com. Computer Applications',
+    stream: 'Commerce & Management',
+    level: 'Undergraduate · 3 Years',
+    courses: 'Accounting, Tally, Business Analytics, Web Development',
+    tagline: 'Leading-edge commerce education integrating modern software and business systems.',
+    image: banner003,
+    accentColor: '#2563eb',
   },
   {
     id: 2,
-    title: 'Arts',
-    courses: 'BA (Hindi) | MA (Hindi)',
-    btnLabel: 'See Arts courses',
-    accent: '#240f47',
-    lightAccent: '#381a6e',
+    title: 'B.Sc. Computer Science',
+    stream: 'Science & Technology',
+    level: 'Undergraduate · 3 Years',
+    courses: 'Data Structures, AI, Python, Database Systems',
+    tagline: 'Cutting-edge software engineering, algorithms, and practical computing laboratories.',
+    image: banner001,
+    accentColor: '#059669',
   },
   {
     id: 3,
-    title: 'Science',
-    courses: 'B.Sc | M.Sc',
-    btnLabel: 'See Science courses',
-    accent: '#210e42',
-    lightAccent: '#351768',
+    title: 'B.B.A. Business Administration',
+    stream: 'Management Studies',
+    level: 'Undergraduate · 3 Years',
+    courses: 'Marketing, Human Resource, Financial Planning, Operations',
+    tagline: 'Cultivating leadership, executive decision-making, and entrepreneurial competencies.',
+    image: banner6,
+    accentColor: '#d97706',
   },
   {
     id: 4,
-    title: 'Vocational',
-    courses: 'B.Voc',
-    btnLabel: 'See Vocational courses',
-    accent: '#28124f',
-    lightAccent: '#3e1f7a',
+    title: 'B.A. Hindi Literature',
+    stream: 'Arts & Humanities',
+    level: 'Undergraduate · 3 Years',
+    courses: 'Linguistics, Classical Literature, Translation, Creative Writing',
+    tagline: 'Deep scholastic immersion in rich linguistic traditions and literary arts.',
+    image: banner4,
+    accentColor: '#db2777',
+  },
+  {
+    id: 5,
+    title: 'B.Voc. Software Development',
+    stream: 'Vocational & IT',
+    level: 'UGC Sponsored · 3 Years',
+    courses: 'Full-Stack Development, Cloud Systems, UI/UX, Internships',
+    tagline: 'Direct industry skill development with 100% applied internships and corporate placement.',
+    image: banner5,
+    accentColor: '#0891b2',
+  },
+  {
+    id: 6,
+    title: 'B.Com. (Honours / Regular)',
+    stream: 'Commerce & Finance',
+    level: 'Undergraduate · 3 Years',
+    courses: 'Corporate Tax, Auditing, Financial Markets, Banking Law',
+    tagline: 'Comprehensive grounding for CA, CMA, banking, and multinational financial roles.',
+    image: banner7,
+    accentColor: '#7c3aed',
+  },
+  {
+    id: 7,
+    title: 'B.Sc. Mathematics & Statistics',
+    stream: 'Science & Data',
+    level: 'Undergraduate · 3 Years',
+    courses: 'Pure Mathematics, Statistical Inference, Numerical Analysis',
+    tagline: 'Analytical rigour and mathematical foundation for tech, data science, and research.',
+    image: banner8,
+    accentColor: '#0d9488',
+  },
+  {
+    id: 8,
+    title: 'B.A. Mass Communication',
+    stream: 'Arts & Media',
+    level: 'Undergraduate · 3 Years',
+    courses: 'Broadcast Journalism, Digital Media, PR, Video Production',
+    tagline: 'Professional training in contemporary journalism, media ethics, and multimedia storytelling.',
+    image: banner002,
+    accentColor: '#ea580c',
+  },
+  {
+    id: 9,
+    title: 'M.Com. Master of Commerce',
+    stream: 'Postgraduate Studies',
+    level: 'Postgraduate · 2 Years',
+    courses: 'Advanced Accounting, Strategic Finance, Corporate Governance',
+    tagline: 'Autonomous university postgraduate syllabus with advanced research and industry seminars.',
+    image: aboutMemento,
+    accentColor: '#4f46e5',
+  },
+  {
+    id: 10,
+    title: 'M.Sc. Computer Science',
+    stream: 'Postgraduate Studies',
+    level: 'Postgraduate · 2 Years',
+    courses: 'Machine Learning, Cloud Architecture, Advanced Algorithms',
+    tagline: 'Postgraduate research and software engineering preparing tech leaders of tomorrow.',
+    image: aboutDegree,
+    accentColor: '#059669',
+  },
+  {
+    id: 11,
+    title: 'M.A. Hindi Language & Literature',
+    stream: 'Postgraduate Studies',
+    level: 'Postgraduate · 2 Years',
+    courses: 'Hindi Poetics, Comparative Literature, Scholastic Research',
+    tagline: 'Advanced research and post-graduate distinction in language, literature, and philology.',
+    image: aboutSpeech,
+    accentColor: '#c2410c',
+  },
+  {
+    id: 12,
+    title: 'M.B.A. Business Management',
+    stream: 'M.C. Gupta College of Business',
+    level: 'AICTE Approved · 2 Years',
+    courses: 'Finance, Marketing, HR, Enterprise Strategy, Analytics',
+    tagline: 'Prestigious business management curriculum with corporate tie-ups and campus drives.',
+    image: banner002,
+    accentColor: '#be123c',
   },
 ]
 
 export default function ProgrammesSection() {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStartX = useRef(0)
+  const totalCards = programmesList.length
+
+  const goTo = useCallback((idx: number) => {
+    setActiveIndex((idx + totalCards) % totalCards)
+  }, [totalCards])
+
+  const next = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo])
+  const prev = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return
+      if (e.key === 'ArrowRight') next()
+      if (e.key === 'ArrowLeft') prev()
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [next, prev])
+
+  // Drag / swipe controls
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setIsDragging(true)
+    dragStartX.current = e.clientX
+  }
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return
+    const diff = e.clientX - dragStartX.current
+    if (Math.abs(diff) > 55) {
+      if (diff > 0) prev()
+      else next()
+      dragStartX.current = e.clientX
+    }
+  }
+
+  const handlePointerUp = () => setIsDragging(false)
+
+  // Current active item
+  const currentItem = programmesList[activeIndex]
+
+  // Calculate arc geometry for each card relative to active card
+  // This guarantees NO cards are ever upside down!
+  const getCardStyle = (index: number) => {
+    let diff = index - activeIndex
+    // Circular wrap to shortest path: -6 to +6
+    if (diff > totalCards / 2) diff -= totalCards
+    if (diff < -totalCards / 2) diff += totalCards
+
+    const absDiff = Math.abs(diff)
+
+    // Hide any cards that curve beyond the visible 180° top arc
+    if (absDiff > 3) {
+      return {
+        opacity: 0,
+        pointerEvents: 'none' as const,
+        transform: `translateX(${diff > 0 ? 550 : -550}px) translateY(140px) scale(0.6)`,
+        zIndex: 0,
+        visibility: 'hidden' as const,
+      }
+    }
+
+    // Geometry along the circular arc
+    // diff = 0 (center apex): x = 0, y = 0, rot = 0deg, scale = 1.05
+    // diff = ±1: x = ±220px, y = 28px, rot = ±12deg, scale = 0.92
+    // diff = ±2: x = ±400px, y = 78px, rot = ±24deg, scale = 0.8
+    // diff = ±3: x = ±540px, y = 135px, rot = ±34deg, scale = 0.68
+    const sign = diff < 0 ? -1 : 1
+    const xPositions = [0, 220, 395, 540]
+    const yPositions = [0, 28, 76, 132]
+    const rotations = [0, 12, 23, 33]
+    const scales = [1.06, 0.92, 0.8, 0.68]
+    const opacities = [1, 0.85, 0.5, 0.2]
+    const blurs = [0, 0.5, 2, 4]
+
+    const x = sign * xPositions[absDiff]
+    const y = yPositions[absDiff]
+    const rot = sign * rotations[absDiff]
+    const scale = scales[absDiff]
+    const opacity = opacities[absDiff]
+    const blur = blurs[absDiff]
+    const zIndex = 30 - absDiff * 8
+
+    return {
+      transform: `translateX(calc(-50% + ${x}px)) translateY(${y}px) rotate(${rot}deg) scale(${scale})`,
+      opacity,
+      filter: blur > 0 ? `blur(${blur}px)` : 'none',
+      zIndex,
+      visibility: 'visible' as const,
+    }
+  }
 
   return (
     <section
       id="programmes"
-      className="relative pt-6 sm:pt-8 pb-8 sm:pb-10 bg-[#fcfcfd] overflow-hidden flex flex-col justify-center"
+      className="relative w-full pt-8 sm:pt-10 pb-8 sm:pb-10 overflow-hidden select-none"
+      style={{
+        background: 'linear-gradient(180deg, #fdf8f3 0%, #faf6f0 50%, #ffffff 100%)',
+        fontFamily: 'Inter, sans-serif',
+      }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
     >
-      {/* Anchor alias for navbar / footer links */}
+      {/* Anchor for nav links */}
       <div id="academics" className="absolute -top-24 pointer-events-none" />
-      {/* 1. Header matching Figma: WHAT WE GIVE, Find your programme */}
-      <div className="max-w-4xl mx-auto px-4 text-center relative z-20 mb-6 sm:mb-8">
-        <div className="inline-flex items-center gap-2 justify-center">
-          <span className="w-2 h-2 rounded-full bg-[#f95721]" />
-          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#f95721]">
-            WHAT WE GIVE
-          </span>
-        </div>
 
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1e1b4b] tracking-tight mt-2">
-          Find your programme
-        </h2>
-
-        <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-lg mx-auto">
-          Undergraduate, postgraduate and vocational courses across four streams.
-        </p>
+      {/* Subtle light background ambient glow */}
+      <div className="absolute inset-0 pointer-events-none opacity-50">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[650px] h-[300px] bg-gradient-to-b from-[#ea580c]/10 via-amber-500/5 to-transparent blur-3xl" />
+        <div className="w-full h-full bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:28px_28px] opacity-40" />
       </div>
 
-      {/* 2. Interactive Arc Cards Deck - Calibrated to never overlap title */}
-      <div className="arc-deck-container relative w-full flex items-center justify-center py-4 overflow-visible select-none z-10">
-        <div className="programmes-arc-wrapper relative">
-          {programmesData.map((prog, index) => {
-            const cardNum = index + 1
-            const isHovered = hoveredCard === cardNum
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 flex flex-col items-center">
+        {/* Section Header with warm institutional palette */}
+        <div className="max-w-3xl mx-auto text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-2 justify-center mb-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ea580c] animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-widest text-[#ea580c]">
+              WHAT WE OFFER
+            </span>
+          </div>
 
-            return (
-              <div
-                key={prog.id}
-                data-card-i={cardNum}
-                style={{ '--card-i': cardNum } as React.CSSProperties}
-                className={`arc-card group cursor-pointer ${
-                  isHovered ? 'is-active-hover' : ''
-                }`}
-                onMouseEnter={() => setHoveredCard(cardNum)}
-                onMouseLeave={() => setHoveredCard(null)}
-              >
-                {/* Lanyard Top Strap & Chrome Metal Clip */}
-                <div className="absolute -top-9 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-30">
-                  {/* Black fabric lanyard strap */}
-                  <div className="w-4 h-6 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-t shadow-inner opacity-90" />
-                  {/* Metal clip body */}
-                  <div className="w-3.5 h-3.5 bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 rounded-sm shadow-md border border-slate-300 flex items-center justify-center">
-                    <div className="w-1 h-1 rounded-full bg-slate-500/50" />
-                  </div>
-                  {/* Clip swivel hook through hole */}
-                  <div className="w-2 h-2.5 border-2 border-slate-400 rounded-b-md -mt-0.5" />
-                </div>
+          <h2
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#1e1b4b] leading-tight"
+            style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
+          >
+            Find Your Programme
+          </h2>
 
-                {/* Card Inner Lanyard Badge */}
-                <div className="w-full h-full flex flex-col justify-between rounded-[inherit] overflow-hidden shadow-xl shadow-indigo-950/15 border border-slate-200/70 bg-white transition-all duration-300">
-                  
-                  {/* Top Badge Body: Deep Royal Purple with circular watermark rings */}
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base mt-2 max-w-xl mx-auto leading-relaxed">
+            Autonomous curriculum across Commerce, Science, Arts &amp; Vocational streams.
+            Rotate the cards or use arrows to discover every course.
+          </p>
+        </div>
+
+        {/* Circular Wheel Stage */}
+        <div className="relative w-full h-[320px] sm:h-[350px] flex items-center justify-center overflow-visible">
+          {/* Card Wheel Container */}
+          <div className="relative w-full h-full flex items-center justify-center">
+            {programmesList.map((prog, index) => {
+              const isActive = index === activeIndex
+              const cardStyle = getCardStyle(index)
+
+              return (
+                <div
+                  key={prog.id}
+                  data-title={prog.title}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goTo(index)
+                  }}
+                  style={cardStyle}
+                  className={`arc-card absolute top-2 left-1/2 cursor-pointer transition-all duration-500 ease-out ${isActive ? 'is-active' : ''
+                    }`}
+                  title={prog.title}
+                >
+                  {/* Card Body: Crisp White Theme with Shadow */}
                   <div
-                    className="relative flex-1 p-4 sm:p-5 flex flex-col items-center justify-between text-center overflow-hidden"
-                    style={{
-                      background: `linear-gradient(160deg, ${prog.accent} 0%, ${prog.lightAccent} 100%)`,
-                    }}
+                    className={`w-[195px] sm:w-[220px] aspect-[4/5.4] relative rounded-2xl overflow-hidden bg-white shadow-xl transition-all duration-300 ${isActive
+                      ? 'border-2 border-[#ea580c] shadow-2xl shadow-orange-950/20'
+                      : 'border border-slate-200/90 hover:border-slate-300'
+                      }`}
                   >
-                    {/* Watermark concentric circular rings matching Figma */}
-                    <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
-                      <div className="absolute -top-8 -left-8 w-36 h-36 rounded-full border-6 border-white" />
-                      <div className="absolute top-2 left-2 w-24 h-24 rounded-full border-4 border-white" />
-                      <div className="absolute top-8 right-2 w-20 h-20 rounded-full border-4 border-white" />
+                    {/* Course Banner Image */}
+                    <img
+                      src={prog.image}
+                      alt={prog.title}
+                      loading="lazy"
+                      draggable={false}
+                      className="w-full h-full object-cover"
+                    />
+
+                    {/* Gradient Overlay for Text Readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-black/10" />
+
+                    {/* Top Stream Pill */}
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-1 pointer-events-none">
+                      <span
+                        className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm text-white"
+                        style={{
+                          backgroundColor: `${prog.accentColor}cc`,
+                        }}
+                      >
+                        {prog.stream.split(' ')[0]}
+                      </span>
+                      <span className="text-[10px] font-bold font-mono text-white/80 bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-full">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
                     </div>
 
-                    {/* Badge Clip Slot Punch Hole */}
-                    <div className="w-10 h-2 rounded-full bg-white/20 border border-white/30 backdrop-blur-xs shadow-inner mt-0.5 mb-2" />
-
-                    {/* Stream Title */}
-                    <h3 className="relative z-10 text-white font-bold text-base sm:text-lg leading-tight my-auto px-1 tracking-tight drop-shadow-sm">
-                      {prog.title}
-                    </h3>
-
-                    {/* Autonomous Tag */}
-                    <div className="relative z-10 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-xs text-[9px] text-white/85 font-medium tracking-wide">
-                      <Sparkles className="w-2.5 h-2.5 text-[#ff8a65]" />
-                      <span>Accredited Stream</span>
+                    {/* Bottom Card Content */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3.5 text-left pointer-events-none">
+                      <div className="text-[10px] font-bold text-amber-300 uppercase tracking-wide">
+                        {prog.level.split('·')[0]}
+                      </div>
+                      <h3 className="text-xs sm:text-sm font-bold text-white leading-snug mt-0.5 drop-shadow-md line-clamp-2">
+                        {prog.title}
+                      </h3>
+                      <p className="text-[10px] text-slate-200 font-medium line-clamp-1 mt-1 opacity-90">
+                        {prog.courses}
+                      </p>
                     </div>
+
+                    {/* Active Highlight Glow */}
+                    {isActive && (
+                      <div className="absolute inset-0 rounded-[inherit] ring-2 ring-[#ea580c] ring-offset-2 pointer-events-none" />
+                    )}
                   </div>
-
-                  {/* Bottom White Card Section: Degrees & Orange Action Button */}
-                  <div className="bg-white p-3.5 sm:p-4 flex flex-col items-center justify-between gap-2.5 text-center rounded-b-[inherit]">
-                    {/* Course codes */}
-                    <div className="text-slate-800 text-[11px] sm:text-xs font-semibold tracking-tight min-h-[24px] flex items-center justify-center">
-                      {prog.courses}
-                    </div>
-
-                    {/* Pill Action Button matching Figma */}
-                    <a
-                      href="#admissions"
-                      className="w-full py-2 px-3 rounded-full bg-[#f05a28] hover:bg-[#ea580c] active:scale-95 text-white text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs shadow-orange-500/25 transition-all duration-200"
-                    >
-                      <ArrowRight className="w-3 h-3" />
-                      <span>{prog.btnLabel}</span>
-                    </a>
-                  </div>
-
                 </div>
+              )
+            })}
+          </div>
 
-              </div>
-            )
-          })}
+          {/* Floating Left Arrow */}
+          <button
+            type="button"
+            onClick={prev}
+            className="absolute left-2 sm:left-6 md:left-10 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/95 hover:bg-[#ea580c] text-slate-700 hover:text-white border border-slate-200 flex items-center justify-center shadow-xl backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer"
+            aria-label="Previous programme"
+            title="Previous programme"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+          </button>
+
+          {/* Floating Right Arrow */}
+          <button
+            type="button"
+            onClick={next}
+            className="absolute right-2 sm:right-6 md:right-10 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/95 hover:bg-[#ea580c] text-slate-700 hover:text-white border border-slate-200 flex items-center justify-center shadow-xl backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer"
+            aria-label="Next programme"
+            title="Next programme"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+          </button>
+        </div>
+
+        {/* Active Programme Detail Spotlight Panel - Light Card */}
+        <div className="relative z-30 mt-3 sm:mt-4 max-w-2xl w-full bg-white/95 backdrop-blur-xl rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-xl shadow-orange-950/5 text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 border border-orange-200/80 text-[#ea580c] text-xs font-bold uppercase tracking-wider mb-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{currentItem.stream}</span>
+          </div>
+
+          <h3
+            className="text-xl sm:text-2xl font-bold text-[#1e1b4b] tracking-tight leading-snug"
+            style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
+          >
+            {currentItem.title}
+          </h3>
+
+          <p className="text-xs sm:text-sm text-slate-600 mt-2 max-w-lg leading-relaxed">
+            {currentItem.tagline}
+          </p>
+
+          <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 text-xs text-slate-500">
+            <span className="font-bold text-[#1e1b4b]">Curriculum Focus:</span>
+            <span>{currentItem.courses}</span>
+          </div>
+
+          {/* Action CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-4 pt-3.5 border-t border-slate-100 w-full">
+            <a
+              href="#admissions"
+              className="px-6 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs sm:text-sm font-bold tracking-wide shadow-md shadow-orange-600/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span>Apply for this Course</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+
+            <a
+              href="#notices"
+              className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold border border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-slate-500" />
+              <span>Syllabus &amp; Details</span>
+            </a>
+          </div>
+
+          {/* Pagination dots */}
+          <div className="flex items-center gap-1.5 mt-4">
+            {programmesList.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goTo(i)}
+                className={`transition-all duration-300 rounded-full cursor-pointer border-none p-0 ${i === activeIndex
+                  ? 'w-6 h-2 bg-[#ea580c]'
+                  : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
+                  }`}
+                aria-label={`Go to programme ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* 3. Bottom Button matching Figma: View All programme */}
-      <div className="relative z-20 text-center mt-4">
-        <a
-          href="#programmes"
-          className="inline-flex items-center justify-center px-6 py-2 rounded-lg border border-slate-700 hover:border-slate-900 bg-white hover:bg-slate-900 text-slate-800 hover:text-white text-xs sm:text-sm font-medium tracking-wide transition-all duration-200 shadow-xs group"
-        >
-          <span>View All programme</span>
-          <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1 transition-transform" />
-        </a>
-      </div>
-
-      {/* Embedded CSS with Clean Arc Physics and No Header Overlap */}
-      <style>{`
-        .programmes-arc-wrapper {
-          --card-trans-duration: 800ms;
-          --card-trans-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
-
-          --card-border-radius: 16px;
-          --card-width: 210px;
-          --card-height: 290px;
-          --radius: 680px; 
-          --cards: 4;
-          --arc-size: 0.16;          /* Gentle natural spread */
-          --arc-center: 0.75;        /* 12 o'clock apex */
-          --arc-start: calc(var(--arc-center) - var(--arc-size) / 2);
-          --arc-shift: 0;
-          --arc-shift-delta: 0.015;
-
-          position: relative;
-          width: var(--card-width);
-          height: var(--card-height);
-          margin: 0 auto;
-        }
-
-        @media (max-width: 768px) {
-          .programmes-arc-wrapper {
-            --card-width: 175px;
-            --card-height: 250px;
-            --radius: 500px;
-            --arc-size: 0.20;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .programmes-arc-wrapper {
-            --card-width: 155px;
-            --card-height: 230px;
-            --radius: 420px;
-            --arc-size: 0.24;
-          }
-        }
-
-        .arc-card {
-          --arc-step: calc(var(--arc-size) / (var(--cards) - 1));
-          
-          position: absolute;
-          width: var(--card-width);
-          height: var(--card-height);
-          border-radius: var(--card-border-radius);
-
-          /* Center of circle placed at (50%, radius + 10px) so the apex is ALWAYS below header */
-          offset-path: circle(var(--radius) at 50% calc(var(--radius) + 15px));
-          offset-distance: calc(
-            (var(--arc-start)
-             + (var(--card-i) - 1) * var(--arc-step)
-             + var(--arc-shift)
-            ) * 100%
-          );
-
-          offset-rotate: auto;
-          offset-anchor: 50% 0%;
-          transition: all var(--card-trans-duration) var(--card-trans-easing);
-          will-change: transform, offset-distance, offset-anchor;
-        }
-
-        /* Natural Left-to-Right Z-Index Hierarchy */
-        .arc-card:nth-child(1) { z-index: 1; }
-        .arc-card:nth-child(2) { z-index: 2; }
-        .arc-card:nth-child(3) { z-index: 3; }
-        .arc-card:nth-child(4) { z-index: 4; }
-
-        /* Hover Expansion Physics */
-        .arc-card:hover,
-        .arc-card.is-active-hover {
-          offset-anchor: 50% 12% !important;
-          z-index: 50 !important;
-          filter: drop-shadow(0 20px 30px rgba(30, 27, 75, 0.3));
-        }
-
-        /* Siblings to the Right Shift Away */
-        .arc-card:hover + div {
-          --arc-shift: calc(var(--arc-shift-delta) * 2.5);
-        }
-        .arc-card:hover + div + div {
-          --arc-shift: calc(var(--arc-shift-delta) * 1.5);
-        }
-        .arc-card:hover + div + div + div {
-          --arc-shift: calc(var(--arc-shift-delta) * 0.8);
-        }
-
-        /* Siblings to the Left Shift Away */
-        .arc-card:has(+ *:hover) {
-          --arc-shift: calc(var(--arc-shift-delta) * -2.5);
-        }
-        .arc-card:has(+ * + *:hover) {
-          --arc-shift: calc(var(--arc-shift-delta) * -1.5);
-        }
-        .arc-card:has(+ * + * + *:hover) {
-          --arc-shift: calc(var(--arc-shift-delta) * -0.8);
-        }
-      `}</style>
     </section>
   )
 }

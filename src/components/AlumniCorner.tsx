@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import './AlumniCorner.css'
-import alumniGirl1 from '@/assets/Students/magnific_inidan-student_6AF8HQpiJO.png'
-import alumniBoy1 from '@/assets/Students/magnific_inidan-student_jUdzXehLD0.png'
-import alumniGirl2 from '@/assets/Students/premium_photo-1661481422770-29567015ece6.avif'
+import alumniWomanOffice from '@/assets/Alumni/casual-clothes-portrait-attractive-young-woman-standing-office-with-black-bag.jpg'
+import alumniManLaptop from '@/assets/Alumni/smiling-indian-man-casual-close-with-laptop-backpack-pastel-wall.jpg'
+import alumniWomanStudent from '@/assets/Alumni/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDI0LTAzL2ZyZWVpbWFnZXNjb21wYW55X3Bob3RvX29mX3lvdW5nX2luZGlhbl9naXJsX2hvbGRpbmdfc3R1ZGVudF9iYV8zN2QyNjU4Yi0yOWIwLTQyZmQtODhmYy04OGU3ZTcxYmVlNDcucG5n.jpeg'
 
 const triggers: ('two' | 'three' | 'four')[] = ['two', 'three', 'four']
 
@@ -21,15 +21,13 @@ export default function AlumniCorner() {
       e.stopPropagation()
     }
     setActiveTrigger(id)
-    if (id === 'two') {
-      setAnimateHeading(false)
+    setAnimateHeading(false)
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setHeadingKey((prev) => prev + 1)
-          setAnimateHeading(true)
-        })
+        setHeadingKey((prev) => prev + 1)
+        setAnimateHeading(true)
       })
-    }
+    })
     const radio = document.getElementById(`alumni-${id}`) as HTMLInputElement | null
     if (radio) {
       radio.checked = true
@@ -95,10 +93,10 @@ export default function AlumniCorner() {
     <section
       ref={sectionRef}
       id="alumni-corner"
-      className="relative w-full overflow-hidden bg-[#e2e2f5] py-14 sm:py-20 select-none border-t border-slate-200/60"
+      className="relative w-full overflow-hidden bg-[#e2e2f5] pt-8 sm:pt-10 pb-8 sm:pb-10 select-none border-t border-slate-200/60"
     >
       {/* Section Header: Our Students / Alumni Corner */}
-      <div className="max-w-4xl mx-auto px-4 text-center mb-8 relative z-20">
+      <div className="max-w-4xl mx-auto px-4 text-center mb-6 sm:mb-8 relative z-20">
         <div className="inline-flex items-center gap-2 justify-center mb-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#f95721]" />
           <span className="text-xs font-bold uppercase tracking-widest text-[#f95721]">
@@ -202,12 +200,19 @@ export default function AlumniCorner() {
                 <div className="content">
                   <div className="content_offset">
                     <div className="student-stars">★★★★★</div>
-                    <h2>Ramya</h2>
+                    <h2>Ananya Sharma</h2>
+                    <div className="alumni-role-tag">
+                      Regional Operations Manager · Reliance Retail
+                    </div>
+                    <div className="alumni-batch-badge">
+                      B.Com (Honours) · Batch 2018 — 2021
+                    </div>
                     <p>
-                      BATCH 18–21 · Personal Shopper – Shoppers Stop · "As one of the top institutions
-                      in Hyderabad, Telangana, Hindi Mahavidyalaya shaped me from day one to face the
-                      corporate world with confidence and professional leadership."
+                      "As one of the premier autonomous colleges in Hyderabad, Hindi Mahavidyalaya shaped me from day one to face the corporate world with commercial acumen, confidence, and leadership."
                     </p>
+                    <div className="alumni-stat-badge">
+                      Campus Placement · 7.5 LPA Package
+                    </div>
                   </div>
                   <h1
                     key={headingKey}
@@ -271,14 +276,14 @@ export default function AlumniCorner() {
                       <span>I feel proud that I was a student of Hindi Mahavidyalaya.</span>
                       <span>The institute gave me solid knowledge and professional ethics.</span>
                       <span className="name">Ananya Sharma</span>
-                      <span className="auth">Regional Manager - Reliance Retail · BATCH 18–21 · ★★★★★</span>
+                      <span className="auth">Regional Operations Manager – Reliance Retail · B.Com (Hons) · ★★★★★</span>
                       <span className="quo">"</span>
                     </h5>
                   </div>
                   <div className="content_picture">
                     <img
-                      src={alumniGirl1}
-                      alt="Ananya Sharma - BATCH 18-21"
+                      src={alumniWomanOffice}
+                      alt="Ananya Sharma - Regional Operations Manager, Reliance Retail"
                     />
                   </div>
                   <h1
@@ -319,20 +324,61 @@ export default function AlumniCorner() {
                 <div className="logo">Alumni Corner</div>
                 <div className="pagenumber">4 5</div>
                 <div className="content">
-                  <div className="content_center">
+                  <div className="content_offset">
                     <div className="student-stars">★★★★★</div>
-                    <h4>
-                      "Hindi Mahavidyalaya has the most innovative methodology for building the
-                      career of its students. From the time of inception, the team has a clear
-                      mindset to give industries market-ready talent."
-                    </h4>
-                    <h6>Raghu Prasad · Sr. HR Manager – Capgemini (BATCH 18–21)</h6>
+                    <h2>Rahul Verma</h2>
+                    <div className="alumni-role-tag">
+                      Senior Software Engineer · Capgemini
+                    </div>
+                    <div className="alumni-batch-badge">
+                      B.Sc (Computer Science) · Batch 2018 — 2021
+                    </div>
+                    <p>
+                      "Hindi Mahavidyalaya has an innovative methodology for shaping career-ready students. The coding labs, faculty mentorship, and industrial seminars gave me the foundation to thrive in multinational software engineering."
+                    </p>
+                    <div className="alumni-stat-badge">
+                      Campus Placement · 8.4 LPA Package
+                    </div>
                   </div>
+                  <h1
+                    key={`heading-p5-${headingKey}`}
+                    className={animateHeading ? 'heading-animated-3d' : 'heading-hidden-3d'}
+                  >
+                    <span>A</span>
+                    <span>l</span>
+                    <span>u</span>
+                    <span>m</span>
+                    <span>n</span>
+                    <span>i</span>
+                    <span>&nbsp;</span>
+                    <span>C</span>
+                    <span>o</span>
+                    <span>r</span>
+                    <span>n</span>
+                    <span>e</span>
+                    <span>r</span>
+                    <br />
+                    <span>B</span>
+                    <span>a</span>
+                    <span>t</span>
+                    <span>c</span>
+                    <span>h</span>
+                    <span>&nbsp;</span>
+                    <span>2</span>
+                    <span>0</span>
+                    <span>1</span>
+                    <span>8</span>
+                    <span>-</span>
+                    <span>2</span>
+                    <span>0</span>
+                    <span>2</span>
+                    <span>1</span>
+                  </h1>
                 </div>
               </div>
             </div>
 
-            {/* PAGE 6: SPREAD 4-5 (RIGHT - RAHUL VERMA SPREAD) */}
+            {/* PAGE 6: SPREAD 4-5 (RIGHT - RAHUL VERMA) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="hamburger">
@@ -341,63 +387,117 @@ export default function AlumniCorner() {
                   <div className="hamburger_part" />
                 </div>
                 <div className="bg" />
-                <div className="content_centerimage">
-                  <img
-                    src={alumniBoy1}
-                    alt="Rahul Verma - BATCH 18-21"
-                  />
-                </div>
-                <div className="content">
-                  <div className="content_center right">
-                    <div className="student-stars">★★★★★</div>
-                    <h4>
-                      "The campus environment, guest speaker seminars, and corporate drives gave me
-                      the ideal launchpad for multinational human resource leadership."
-                    </h4>
-                    <h6>Talent Leadership &amp; Corporate Mentorship · Capgemini</h6>
-                  </div>
-                </div>
                 <div className="footer">
                   <i className="fab fa-google-plus-g" />
                   <i className="fas fa-retweet" />
                   <i className="far fa-heart" />
                   <i className="far fa-share-square" />
                 </div>
+                <div className="content">
+                  <div className="content_quote">
+                    <h5>
+                      <span className="quo">
+                        <i>"</i>
+                      </span>
+                      <span>The campus environment and guest speaker seminars gave me the launchpad</span>
+                      <span>for multinational enterprise software architecture.</span>
+                      <span className="name">Rahul Verma</span>
+                      <span className="auth">Senior Software Engineer – Capgemini · B.Sc CS · ★★★★★</span>
+                      <span className="quo">"</span>
+                    </h5>
+                  </div>
+                  <div className="content_picture">
+                    <img
+                      src={alumniManLaptop}
+                      alt="Rahul Verma - Senior Software Engineer, Capgemini"
+                    />
+                  </div>
+                  <h1
+                    key={`right-p6-${headingKey}`}
+                    className={animateHeading ? 'heading-animated-3d' : 'heading-hidden-3d'}
+                  >
+                    <span>S</span>
+                    <span>o</span>
+                    <span>f</span>
+                    <span>t</span>
+                    <span>w</span>
+                    <span>a</span>
+                    <span>r</span>
+                    <span>e</span>
+                    <br />
+                    <span>&amp;</span>
+                    <span>&nbsp;</span>
+                    <span>C</span>
+                    <span>l</span>
+                    <span>o</span>
+                    <span>u</span>
+                    <span>d</span>
+                  </h1>
+                </div>
               </div>
             </div>
 
-            {/* PAGE 7: SPREAD 6-7 (LEFT - ALUMNI NETWORK & GLOBAL IMPACT) */}
+            {/* PAGE 7: SPREAD 6-7 (LEFT - RAMYA KRISHNAN) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="logo">Alumni Corner</div>
                 <div className="pagenumber">6 7</div>
                 <div className="content">
-                  <div className="content_section">
-                    <h2>15,000+ Alumni</h2>
+                  <div className="content_offset">
+                    <div className="student-stars">★★★★★</div>
+                    <h2>Ramya Krishnan</h2>
+                    <div className="alumni-role-tag">
+                      Brand Operations Specialist · Shoppers Stop
+                    </div>
+                    <div className="alumni-batch-badge">
+                      B.B.A (Management) · Batch 2018 — 2021
+                    </div>
                     <p>
-                      BATCH 18–21 &amp; Beyond · Leading in technology, finance, civil services, retail
-                      management, and entrepreneurship across India and international hubs.
+                      "From organizing inter-collegiate business symposiums to interactive case-study presentations, Hindi Mahavidyalaya cultivated the strategic acumen and team management skills I rely on every day."
                     </p>
+                    <div className="alumni-stat-badge">
+                      Campus Placement · 6.8 LPA Package
+                    </div>
                   </div>
-                  <div className="content_section">
-                    <h2>Industry Mentorship</h2>
-                    <p>
-                      Senior alumni return regularly to conduct mock interviews, resume bootcamps, and
-                      mentorship for graduating students preparing for campus drives.
-                    </p>
-                  </div>
-                  <div className="content_section">
-                    <h2>60+ Years Legacy</h2>
-                    <p>
-                      Honouring six decades of academic distinction, autonomous university syllabus,
-                      NAAC accreditation, and transformative corporate career journeys.
-                    </p>
-                  </div>
+                  <h1
+                    key={`heading-p7-${headingKey}`}
+                    className={animateHeading ? 'heading-animated-3d' : 'heading-hidden-3d'}
+                  >
+                    <span>A</span>
+                    <span>l</span>
+                    <span>u</span>
+                    <span>m</span>
+                    <span>n</span>
+                    <span>i</span>
+                    <span>&nbsp;</span>
+                    <span>C</span>
+                    <span>o</span>
+                    <span>r</span>
+                    <span>n</span>
+                    <span>e</span>
+                    <span>r</span>
+                    <br />
+                    <span>B</span>
+                    <span>a</span>
+                    <span>t</span>
+                    <span>c</span>
+                    <span>h</span>
+                    <span>&nbsp;</span>
+                    <span>2</span>
+                    <span>0</span>
+                    <span>1</span>
+                    <span>8</span>
+                    <span>-</span>
+                    <span>2</span>
+                    <span>0</span>
+                    <span>2</span>
+                    <span>1</span>
+                  </h1>
                 </div>
               </div>
             </div>
 
-            {/* PAGE 8: SPREAD 6-7 (RIGHT - BACK COVER) */}
+            {/* PAGE 8: SPREAD 6-7 (RIGHT - RAMYA KRISHNAN) */}
             <div className="pages_page">
               <div className="pages_page__inner">
                 <div className="hamburger">
@@ -406,28 +506,72 @@ export default function AlumniCorner() {
                   <div className="hamburger_part" />
                 </div>
                 <div className="bg" />
-                <div className="content_centerimage">
-                  <img
-                    src={alumniGirl2}
-                    alt="Kavya Reddy - BATCH 18-21"
-                  />
-                </div>
-                <div className="content">
-                  <div className="content_center right">
-                    <div className="student-stars">★★★★★</div>
-                    <h4>"Lifelong connection, global leadership, and transformative alumni success."</h4>
-                    <h6>Kavya Reddy · Hindi Mahavidyalaya Alumni Association</h6>
-                  </div>
-                </div>
                 <div className="footer">
                   <i className="fab fa-google-plus-g" />
                   <i className="fas fa-retweet" />
                   <i className="far fa-heart" />
                   <i className="far fa-share-square" />
                 </div>
+                <div className="content">
+                  <div className="content_quote">
+                    <h5>
+                      <span className="quo">
+                        <i>"</i>
+                      </span>
+                      <span>Hindi Mahavidyalaya shaped my leadership, strategic thinking,</span>
+                      <span>and corporate communication from day one.</span>
+                      <span className="name">Ramya Krishnan</span>
+                      <span className="auth">Brand Operations Specialist – Shoppers Stop · B.B.A · ★★★★★</span>
+                      <span className="quo">"</span>
+                    </h5>
+                  </div>
+                  <div className="content_picture">
+                    <img
+                      src={alumniWomanStudent}
+                      alt="Ramya Krishnan - Brand Operations Specialist, Shoppers Stop"
+                    />
+                  </div>
+                  <h1
+                    key={`right-p8-${headingKey}`}
+                    className={animateHeading ? 'heading-animated-3d' : 'heading-hidden-3d'}
+                  >
+                    <span>G</span>
+                    <span>r</span>
+                    <span>o</span>
+                    <span>w</span>
+                    <span>t</span>
+                    <span>h</span>
+                    <br />
+                    <span>&amp;</span>
+                    <span>&nbsp;</span>
+                    <span>I</span>
+                    <span>m</span>
+                    <span>p</span>
+                    <span>a</span>
+                    <span>c</span>
+                    <span>t</span>
+                  </h1>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Spread Navigation Indicators */}
+        <div className="flex items-center justify-center gap-3 mt-6">
+          {triggers.map((trigger, idx) => (
+            <button
+              key={trigger}
+              type="button"
+              onClick={(e) => setTrigger(trigger, e)}
+              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                activeTrigger === trigger
+                  ? 'w-8 bg-[#ea580c]'
+                  : 'w-2.5 bg-slate-400/50 hover:bg-slate-500'
+              }`}
+              aria-label={`Go to alumni spread ${idx + 1}`}
+            />
+          ))}
         </div>
       </div>
     </section>

@@ -124,7 +124,7 @@ const trackTwo = [...recruitersList.slice(8), ...recruitersList.slice(8)]
 
 export default function RecruitersSection() {
   return (
-    <section id="our-recruiters" className="relative w-full py-12 sm:py-16 bg-white overflow-hidden border-t border-slate-100 select-none">
+    <section id="our-recruiters" className="relative w-full pt-8 sm:pt-10 pb-8 sm:pb-10 bg-white overflow-hidden border-t border-slate-100 select-none">
       {/* Background Decor */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]">
         <div
@@ -138,7 +138,7 @@ export default function RecruitersSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-4xl mx-auto px-4 text-center mb-8 relative z-20">
+        <div className="max-w-4xl mx-auto px-4 text-center mb-6 sm:mb-8 relative z-20">
           <div className="inline-flex items-center gap-2 justify-center mb-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#f95721]" />
             <span className="text-xs font-bold uppercase tracking-widest text-[#f95721]">

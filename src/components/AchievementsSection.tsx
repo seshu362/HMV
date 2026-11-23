@@ -103,6 +103,18 @@ export default function AchievementsSection() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  // Prevent background scrolling when spotlight modal is active
+  useEffect(() => {
+    if (activeModalItem) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [activeModalItem])
+
   // 60FPS Continuous Animation loop with interactive drag override
   useEffect(() => {
     let animId: number
@@ -333,36 +345,38 @@ export default function AchievementsSection() {
       {/* ================= 4. Spotlight Card: Comes Up to Front for Clear Reading ================= */}
       {activeModalItem && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/75 backdrop-blur-md animate-fadeIn"
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-950/80 backdrop-blur-md animate-fadeIn overflow-y-auto"
           onClick={() => setActiveModalItem(null)}
+          role="dialog"
+          aria-modal="true"
         >
           <div
-            className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-300"
+            className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-300 my-auto"
             onClick={(e) => e.stopPropagation()}
             style={{
               animation: 'modalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards'
             }}
           >
             {/* Big Crisp Photo */}
-            <div className="relative w-full h-[260px] sm:h-[320px] overflow-hidden bg-slate-100">
+            <div className="relative w-full h-[240px] sm:h-[300px] overflow-hidden bg-slate-900">
               <img
                 src={activeModalItem.image}
                 alt={activeModalItem.title}
                 className="w-full h-full object-cover"
               />
 
-              {/* Close Button */}
+              {/* Close Button: Elevated with guaranteed z-index and high contrast */}
               <button
                 type="button"
                 onClick={() => setActiveModalItem(null)}
                 aria-label="Close details"
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-lg"
+                className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-xl border border-white/20"
               >
                 <X className="w-5 h-5" />
               </button>
 
               {/* Floating Pill Tag */}
-              <div className="absolute bottom-4 left-4 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-xs font-bold text-[#ea580c] shadow-lg flex items-center gap-1.5 border border-white/60">
+              <div className="absolute bottom-4 left-4 z-20 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-xs font-bold text-[#ea580c] shadow-lg flex items-center gap-1.5 border border-white/60">
                 <Sparkles className="w-3.5 h-3.5 text-[#f95721]" />
                 <span>{activeModalItem.subtitle}</span>
               </div>

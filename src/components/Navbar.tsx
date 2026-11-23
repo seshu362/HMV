@@ -1,369 +1,364 @@
-import { useEffect, useRef, useState } from 'react'
-import { gsap } from 'gsap'
+import { useState, useEffect, useRef } from 'react'
+import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react'
 import logo from '@/assets/logo.svg'
-import {
-  Search,
-  ChevronDown,
-  Menu,
-  X,
-  GraduationCap,
-  Sparkles,
-  BookOpen,
-  Calendar
-} from 'lucide-react'
 
-interface NavbarProps {
-  onSearch?: (query: string) => void
+interface NavItem {
+  label: string
+  href: string
+  dropdown?: { label: string; href: string }[]
 }
 
-export default function Navbar({ onSearch }: NavbarProps) {
+const navItems: NavItem[] = [
+  { label: 'Home', href: '#hero' },
+  {
+    label: 'About',
+    href: '#about',
+    dropdown: [
+      { label: 'About HMV', href: '#about' },
+      { label: 'Vision & Mission', href: '#about' },
+      { label: 'Principal\'s Message', href: '#about' },
+      { label: 'Governance', href: '#about' },
+    ],
+  },
+  {
+    label: 'Academics',
+    href: '#programmes',
+    dropdown: [
+      { label: 'UG Programmes', href: '#programmes' },
+      { label: 'PG Programmes', href: '#programmes' },
+      { label: 'Autonomous Syllabus', href: '#programmes' },
+      { label: 'Examination', href: '#programmes' },
+    ],
+  },
+  {
+    label: 'Admissions',
+    href: '#admissions',
+    dropdown: [
+      { label: 'How to Apply', href: '#admissions' },
+      { label: 'Eligibility', href: '#admissions' },
+      { label: 'Fee Structure', href: '#admissions' },
+      { label: 'Scholarships', href: '#admissions' },
+    ],
+  },
+  { label: 'Notices', href: '#notices' },
+  {
+    label: 'Campus',
+    href: '#campus-gallery',
+    dropdown: [
+      { label: 'Campus Gallery', href: '#campus-gallery' },
+      { label: 'Facilities', href: '#campus-gallery' },
+      { label: 'Library', href: '#campus-gallery' },
+    ],
+  },
+  { label: 'Contact', href: '#footer' },
+]
+
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [admissionsDropdown, setAdmissionsDropdown] = useState(false)
-  const [academicsDropdown, setAcademicsDropdown] = useState(false)
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
+  const [activeSection, setActiveSection] = useState('hero')
+  const dropdownTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const navRef = useRef<HTMLDivElement>(null)
 
-  const navRef = useRef<HTMLElement>(null)
-  const logoRef = useRef<HTMLImageElement>(null)
-
+  // Scroll detection
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Active section tracking
   useEffect(() => {
-    if (!navRef.current) return
-    const ctx = gsap.context(() => {
-      gsap.from('.nav-link-anim', {
-        y: -6,
-        opacity: 0,
-        duration: 0.4,
-        stagger: 0.04,
-        ease: 'power2.out',
-        delay: 0.1,
-      })
-      if (logoRef.current) {
-        gsap.from(logoRef.current, {
-          x: -15,
-          opacity: 0,
-          duration: 0.5,
-          ease: 'power2.out',
-        })
-      }
-    }, navRef)
-    return () => ctx.revert()
+    const sections = ['hero', 'about', 'programmes', 'notices', 'our-student', 'our-recruiters', 'admissions', 'campus-gallery', 'footer']
+    const observers: IntersectionObserver[] = []
+    sections.forEach(id => {
+      const el = document.getElementById(id)
+      if (!el) return
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id) },
+        { rootMargin: '-40% 0px -55% 0px' }
+      )
+      obs.observe(el)
+      observers.push(obs)
+    })
+    return () => observers.forEach(o => o.disconnect())
   }, [])
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault()
-    setMobileOpen(false)
-    setAdmissionsDropdown(false)
-    setAcademicsDropdown(false)
-    const el = document.querySelector(href)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
-    }
+  // Close mobile on resize
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth >= 1024) setMobileOpen(false) }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileOpen])
+
+  const handleDropdownEnter = (label: string) => {
+    if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current)
+    setActiveDropdown(label)
+  }
+  const handleDropdownLeave = () => {
+    dropdownTimeout.current = setTimeout(() => setActiveDropdown(null), 150)
   }
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (onSearch) onSearch(searchQuery)
-    const el = document.querySelector('#academics') || document.querySelector('#notices')
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  const isActive = (item: NavItem) => {
+    const sectionId = item.href.replace('#', '')
+    return activeSection === sectionId || item.dropdown?.some(d => d.href.replace('#', '') === activeSection)
+  }
+
+  const scrollTo = (href: string) => {
+    const id = href.replace('#', '')
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    setMobileOpen(false)
+    setActiveDropdown(null)
   }
 
   return (
-    <nav
-      ref={navRef}
-      className={`sticky top-0 left-0 w-full z-40 bg-white transition-all duration-200 select-none ${
-        scrolled
-          ? 'shadow-md border-b border-stone-200/90 py-2'
-          : 'border-b border-stone-200/80 py-2.5 sm:py-3'
-      }`}
-    >
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
-        {/* 1. Official College Crest & Branding (exact match to Figma logo) */}
-        <a
-          href="#hero"
-          onClick={(e) => handleNavClick(e, '#hero')}
-          className="flex items-center group flex-shrink-0"
-          title="Hindi Mahavidyalaya Autonomous"
-        >
-          <img
-            ref={logoRef}
-            src={logo}
-            alt="Hindi Mahavidyalaya - Autonomous & NAAC Re-Accredited"
-            className="h-12 sm:h-14 md:h-[62px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.01]"
-          />
-        </a>
-
-        {/* 2. Desktop Navigation Links (exact match to Figma design) */}
-        <div className="hidden xl:flex items-center gap-4 lg:gap-5 whitespace-nowrap">
-          {/* Home Pill */}
-          <a
-            href="#hero"
-            onClick={(e) => handleNavClick(e, '#hero')}
-            className="nav-link-anim px-5 py-2 rounded-full bg-[#fff4ed] text-[#ea580c] font-semibold text-sm transition-all hover:bg-[#ffe8db] whitespace-nowrap"
-          >
-            Home
-          </a>
-
-          {/* About us - strictly single line */}
-          <a
-            href="#about"
-            onClick={(e) => handleNavClick(e, '#about')}
-            className="nav-link-anim text-sm font-medium text-stone-700 hover:text-[#ea580c] transition-colors whitespace-nowrap py-2"
-          >
-            About us
-          </a>
-
-          {/* Admissions Dropdown - strictly single line */}
-          <div
-            className="relative"
-            onMouseEnter={() => setAdmissionsDropdown(true)}
-            onMouseLeave={() => setAdmissionsDropdown(false)}
-          >
+    <>
+      <nav
+        ref={navRef}
+        className={`sticky top-0 left-0 right-0 w-full z-[900] transition-all duration-300 ${
+          scrolled
+            ? 'bg-white/95 backdrop-blur-xl shadow-lg shadow-black/5 border-b border-slate-100'
+            : 'bg-white shadow-xs border-b border-slate-100/80'
+        }`}
+        style={{ fontFamily: 'Inter, sans-serif' }}
+      >
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-18">
+            {/* Logo */}
             <button
-              onClick={() => setAdmissionsDropdown(!admissionsDropdown)}
-              className="nav-link-anim flex items-center gap-1 text-sm font-medium text-stone-700 hover:text-[#ea580c] transition-colors py-2 cursor-pointer whitespace-nowrap"
+              onClick={() => scrollTo('#hero')}
+              className="flex items-center flex-shrink-0 group cursor-pointer bg-transparent border-none p-0"
+              style={{ textDecoration: 'none' }}
             >
-              <span>Admissions</span>
-              <ChevronDown className="w-3.5 h-3.5 text-stone-400 stroke-[2.2]" />
+              <img src={logo} alt="HMV Logo" className="h-12 w-auto" />
             </button>
 
-            {admissionsDropdown && (
-              <div className="absolute top-full left-0 w-64 pt-1 z-50 animate-fade-in">
-                <div className="rounded-2xl bg-white border border-stone-200 p-2 shadow-xl space-y-1">
-                  <a
-                    href="#admissions"
-                    onClick={(e) => handleNavClick(e, '#admissions')}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-stone-700 hover:text-[#ea580c] hover:bg-[#fff4ed] transition-all"
+            {/* Desktop Nav */}
+            <div className="hidden lg:flex items-center gap-1">
+              {navItems.map(item => (
+                <div
+                  key={item.label}
+                  className="relative"
+                  onMouseEnter={() => item.dropdown && handleDropdownEnter(item.label)}
+                  onMouseLeave={() => item.dropdown && handleDropdownLeave()}
+                >
+                  <button
+                    onClick={() => scrollTo(item.href)}
+                    className={`flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer border-none ${
+                      isActive(item)
+                        ? 'text-[#ea580c] bg-orange-50'
+                        : 'text-slate-700 hover:text-[#ea580c] hover:bg-orange-50/60'
+                    }`}
+                    style={{ fontFamily: 'Inter, sans-serif' }}
                   >
-                    <Sparkles className="w-4 h-4 text-[#ea580c]" />
-                    <div>
-                      <div className="font-semibold">Admissions 2026-27</div>
-                      <div className="text-[10px] text-stone-400">Apply online for UG &amp; PG</div>
-                    </div>
-                  </a>
-                  <a
-                    href="#admissions"
-                    onClick={(e) => handleNavClick(e, '#admissions')}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-stone-700 hover:text-[#ea580c] hover:bg-stone-50 transition-all"
-                  >
-                    <Calendar className="w-4 h-4 text-[#ea580c]" />
-                    <div>
-                      <div className="font-semibold">Dates &amp; Eligibility</div>
-                      <div className="text-[10px] text-stone-400">Merit list &amp; fee details</div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            )}
-          </div>
+                    {item.label}
+                    {item.dropdown && (
+                      <ChevronDown
+                        size={13}
+                        className={`transition-transform duration-200 ${activeDropdown === item.label ? 'rotate-180' : ''}`}
+                      />
+                    )}
+                  </button>
 
-          {/* Academics Dropdown - strictly single line */}
-          <div
-            className="relative"
-            onMouseEnter={() => setAcademicsDropdown(true)}
-            onMouseLeave={() => setAcademicsDropdown(false)}
-          >
+                  {/* Dropdown */}
+                  {item.dropdown && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 8px)',
+                        left: '50%',
+                        minWidth: '210px',
+                        background: '#fff',
+                        borderRadius: '12px',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)',
+                        border: '1px solid rgba(226,232,240,0.8)',
+                        padding: '6px',
+                        zIndex: 100,
+                        transition: 'opacity 0.2s, transform 0.2s',
+                        opacity: activeDropdown === item.label ? 1 : 0,
+                        transform: activeDropdown === item.label
+                          ? 'translateX(-50%) translateY(0)'
+                          : 'translateX(-50%) translateY(-8px)',
+                        pointerEvents: activeDropdown === item.label ? 'all' : 'none',
+                        clipPath: activeDropdown === item.label
+                          ? 'inset(0 0 0 0 round 12px)'
+                          : 'inset(0 0 100% 0 round 12px)',
+                      }}
+                    >
+                      {item.dropdown.map(sub => (
+                        <button
+                          key={sub.label}
+                          onClick={() => scrollTo(sub.href)}
+                          className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-sm text-slate-600 hover:text-[#ea580c] hover:bg-orange-50 rounded-lg transition-colors font-medium cursor-pointer border-none bg-transparent"
+                          style={{ fontFamily: 'Inter, sans-serif' }}
+                        >
+                          <ChevronRight size={12} className="text-[#ea580c] opacity-70 flex-shrink-0" />
+                          {sub.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* CTA Button */}
+              <button
+                onClick={() => scrollTo('#admissions')}
+                className="ml-3 btn-primary"
+                style={{ padding: '0.55rem 1.3rem', fontSize: '0.8rem' }}
+              >
+                Apply Now
+              </button>
+            </div>
+
+            {/* Mobile Hamburger */}
             <button
-              onClick={() => setAcademicsDropdown(!academicsDropdown)}
-              className="nav-link-anim flex items-center gap-1 text-sm font-medium text-stone-700 hover:text-[#ea580c] transition-colors py-2 cursor-pointer whitespace-nowrap"
+              className="lg:hidden p-2 rounded-lg text-slate-700 hover:text-[#ea580c] hover:bg-orange-50 transition-colors border-none bg-transparent cursor-pointer"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle menu"
             >
-              <span>Academics</span>
-              <ChevronDown className="w-3.5 h-3.5 text-stone-400 stroke-[2.2]" />
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
-
-            {academicsDropdown && (
-              <div className="absolute top-full left-0 w-64 pt-1 z-50 animate-fade-in">
-                <div className="rounded-2xl bg-white border border-stone-200 p-2 shadow-xl space-y-1">
-                  <a
-                    href="#academics"
-                    onClick={(e) => handleNavClick(e, '#academics')}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-stone-700 hover:text-[#ea580c] hover:bg-[#fff4ed] transition-all"
-                  >
-                    <BookOpen className="w-4 h-4 text-[#ea580c]" />
-                    <div>
-                      <div className="font-semibold">Undergraduate (UG)</div>
-                      <div className="text-[10px] text-stone-400">B.A., B.Com, B.Sc., BBA, B.Voc</div>
-                    </div>
-                  </a>
-                  <a
-                    href="#academics"
-                    onClick={(e) => handleNavClick(e, '#academics')}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-stone-700 hover:text-[#ea580c] hover:bg-stone-50 transition-all"
-                  >
-                    <GraduationCap className="w-4 h-4 text-[#ea580c]" />
-                    <div>
-                      <div className="font-semibold">Postgraduate (PG)</div>
-                      <div className="text-[10px] text-stone-400">M.A. &amp; M.Com Courses</div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            )}
           </div>
-
-          {/* Examinations - strictly single line */}
-          <a
-            href="#notices"
-            onClick={(e) => handleNavClick(e, '#notices')}
-            className="nav-link-anim text-sm font-medium text-stone-700 hover:text-[#ea580c] transition-colors whitespace-nowrap py-2"
-          >
-            Examinations
-          </a>
-
-          {/* Student life - strictly single line */}
-          <a
-            href="#our-student"
-            onClick={(e) => handleNavClick(e, '#our-student')}
-            className="nav-link-anim text-sm font-medium text-stone-700 hover:text-[#ea580c] transition-colors whitespace-nowrap py-2"
-          >
-            Student life
-          </a>
-
-          {/* Recruiters - strictly single line */}
-          <a
-            href="#our-recruiters"
-            onClick={(e) => handleNavClick(e, '#our-recruiters')}
-            className="nav-link-anim text-sm font-medium text-stone-700 hover:text-[#ea580c] transition-colors whitespace-nowrap py-2"
-          >
-            Recruiters
-          </a>
         </div>
+      </nav>
 
-        {/* 3. Search Bar & Apply Now Button (exact match to Figma) */}
-        <div className="flex items-center gap-3">
-          {/* Search Box with Magnifying Glass */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="relative hidden md:block w-48 lg:w-56 xl:w-64"
-          >
-            <input
-              type="text"
-              placeholder="Search notices, courses..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-full bg-[#f3f4f6] hover:bg-[#eceef0] focus:bg-white border border-transparent focus:border-stone-300 text-stone-900 text-xs placeholder:text-stone-400 focus:outline-none transition-all"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
-          </form>
-
-          {/* Apply Now Primary Button */}
-          <a
-            href="#admissions"
-            onClick={(e) => handleNavClick(e, '#admissions')}
-            className="px-6 py-2.5 rounded-full bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold text-sm tracking-wide shadow-md shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center flex-shrink-0 cursor-pointer"
-          >
-            Apply Now
-          </a>
-
-          {/* Mobile Hamburger Button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="xl:hidden p-2 rounded-xl text-stone-700 hover:text-stone-900 hover:bg-stone-100 transition-colors"
-            aria-label="Open Mobile Menu"
-          >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </div>
+      {/* Mobile Drawer Backdrop */}
+      <div
+        onClick={() => setMobileOpen(false)}
+        className="fixed inset-0 z-[850] lg:hidden transition-all duration-300"
+        style={{
+          background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(4px)',
+          opacity: mobileOpen ? 1 : 0,
+          pointerEvents: mobileOpen ? 'all' : 'none',
+        }}
+      />
 
       {/* Mobile Drawer */}
-      {mobileOpen && (
-        <div className="xl:hidden fixed inset-0 top-[115px] bg-white/98 backdrop-blur-2xl z-50 p-6 flex flex-col justify-between overflow-y-auto animate-fade-in shadow-2xl">
-          <div className="space-y-4">
-            {/* Mobile Search */}
-            <form onSubmit={handleSearchSubmit} className="relative w-full">
-              <input
-                type="text"
-                placeholder="Search notices, courses..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-100 border border-stone-200 text-stone-900 text-sm focus:outline-none focus:border-[#ea580c]"
-              />
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-            </form>
-
-            <nav className="flex flex-col space-y-1 pt-2">
-              <a
-                href="#hero"
-                onClick={(e) => handleNavClick(e, '#hero')}
-                className="px-4 py-3 rounded-xl text-base font-semibold text-stone-900 hover:bg-stone-50 transition-colors"
-              >
-                Home
-              </a>
-              <a
-                href="#about"
-                onClick={(e) => handleNavClick(e, '#about')}
-                className="px-4 py-3 rounded-xl text-base font-semibold text-stone-900 hover:bg-stone-50 transition-colors"
-              >
-                About us
-              </a>
-              <a
-                href="#admissions"
-                onClick={(e) => handleNavClick(e, '#admissions')}
-                className="px-4 py-3 rounded-xl text-base font-semibold text-[#ea580c] hover:bg-orange-50 transition-colors flex items-center justify-between"
-              >
-                <span>Admissions 2026-27</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-[#ea580c]">Open</span>
-              </a>
-              <a
-                href="#academics"
-                onClick={(e) => handleNavClick(e, '#academics')}
-                className="px-4 py-3 rounded-xl text-base font-semibold text-stone-900 hover:bg-stone-50 transition-colors"
-              >
-                Academics (UG / PG)
-              </a>
-              <a
-                href="#notices"
-                onClick={(e) => handleNavClick(e, '#notices')}
-                className="px-4 py-3 rounded-xl text-base font-semibold text-stone-900 hover:bg-stone-50 transition-colors"
-              >
-                Examinations &amp; Notices
-              </a>
-              <a
-                href="#our-student"
-                onClick={(e) => handleNavClick(e, '#our-student')}
-                className="px-4 py-3 rounded-xl text-base font-semibold text-stone-900 hover:bg-stone-50 transition-colors"
-              >
-                Campus &amp; Student Life
-              </a>
-              <a
-                href="#our-recruiters"
-                onClick={(e) => handleNavClick(e, '#our-recruiters')}
-                className="px-4 py-3 rounded-xl text-base font-semibold text-stone-900 hover:bg-stone-50 transition-colors"
-              >
-                Our Recruiters &amp; Placements
-              </a>
-              <a
-                href="#alumni-corner"
-                onClick={(e) => handleNavClick(e, '#alumni-corner')}
-                className="px-4 py-3 rounded-xl text-base font-semibold text-stone-900 hover:bg-stone-50 transition-colors"
-              >
-                Alumni Corner
-              </a>
-            </nav>
+      <div
+        className="fixed top-0 right-0 bottom-0 z-[900] lg:hidden"
+        style={{
+          width: 'min(85vw, 360px)',
+          background: '#fff',
+          boxShadow: '-20px 0 60px rgba(0,0,0,0.15)',
+          transform: mobileOpen ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          fontFamily: 'Inter, sans-serif',
+        }}
+      >
+        {/* Drawer Header */}
+        <div
+          style={{
+            padding: '1.25rem 1.25rem 1rem',
+            borderBottom: '1px solid #f1f5f9',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
+          }}
+        >
+          <div className="flex items-center gap-2.5">
+            <img src={logo} alt="HMV Logo" style={{ height: '36px', width: 'auto' }} />
+            <div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 800, fontSize: '0.9rem', color: '#fff', lineHeight: 1.1 }}>
+                Hindi Mahavidyalaya
+              </div>
+              <div style={{ fontSize: '0.57rem', fontWeight: 600, letterSpacing: '0.1em', color: '#ea580c', textTransform: 'uppercase' }}>
+                Estd. 1965
+              </div>
+            </div>
           </div>
-
-          <div className="pt-6 border-t border-stone-200 space-y-3">
-            <a
-              href="#admissions"
-              onClick={(e) => handleNavClick(e, '#admissions')}
-              className="w-full py-3.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold text-center block shadow-lg shadow-orange-500/25"
-            >
-              Apply Online Now
-            </a>
-            <p className="text-center text-xs text-stone-500">
-              Hindi Mahavidyalaya · Nallakunta, Hyderabad
-            </p>
-          </div>
+          <button
+            onClick={() => setMobileOpen(false)}
+            style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '8px', padding: '6px', color: '#fff', cursor: 'pointer' }}
+          >
+            <X size={18} />
+          </button>
         </div>
-      )}
-    </nav>
+
+        {/* Drawer Nav Items */}
+        <div style={{ flex: 1, padding: '0.75rem 0.75rem', overflowY: 'auto' }}>
+          {navItems.map(item => (
+            <div key={item.label}>
+              <div className="flex items-center">
+                <button
+                  onClick={() => {
+                    if (!item.dropdown) scrollTo(item.href)
+                    else setMobileExpanded(mobileExpanded === item.label ? null : item.label)
+                  }}
+                  className={`flex-1 flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all border-none cursor-pointer ${
+                    isActive(item) ? 'text-[#ea580c] bg-orange-50' : 'text-slate-700 bg-transparent hover:bg-slate-50'
+                  }`}
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  {item.label}
+                  {item.dropdown && (
+                    <ChevronDown
+                      size={15}
+                      className={`transition-transform duration-200 ${mobileExpanded === item.label ? 'rotate-180' : ''}`}
+                      style={{ color: '#ea580c' }}
+                    />
+                  )}
+                </button>
+              </div>
+
+              {/* Mobile Sub-menu */}
+              {item.dropdown && (
+                <div
+                  style={{
+                    overflow: 'hidden',
+                    maxHeight: mobileExpanded === item.label ? '400px' : '0',
+                    transition: 'max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                >
+                  <div style={{ paddingLeft: '1rem', paddingBottom: '0.25rem' }}>
+                    {item.dropdown.map(sub => (
+                      <button
+                        key={sub.label}
+                        onClick={() => scrollTo(sub.href)}
+                        className="w-full text-left flex items-center gap-2 px-3 py-2.5 text-sm text-slate-500 hover:text-[#ea580c] hover:bg-orange-50 rounded-lg transition-colors border-none bg-transparent cursor-pointer"
+                        style={{ fontFamily: 'Inter, sans-serif' }}
+                      >
+                        <ChevronRight size={11} style={{ color: '#ea580c', flexShrink: 0 }} />
+                        {sub.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Drawer CTA */}
+        <div style={{ padding: '1rem 1.25rem 1.5rem', borderTop: '1px solid #f1f5f9' }}>
+          <button
+            onClick={() => scrollTo('#admissions')}
+            className="btn-primary w-full justify-center"
+            style={{ width: '100%', justifyContent: 'center' }}
+          >
+            Apply for 2026-27
+          </button>
+          <p style={{ textAlign: 'center', fontSize: '0.65rem', color: '#94a3b8', marginTop: '0.75rem' }}>
+            Admissions closing soon · Merit-based selection
+          </p>
+        </div>
+      </div>
+    </>
   )
 }

@@ -1,206 +1,341 @@
-import { useState } from 'react'
-import admissionsBg from '../assets/ADMISSIONS_IMG.png'
-import {
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  X
-} from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ArrowRight, CheckCircle2, Shield, Award, Users } from 'lucide-react'
+import banner003 from '@/assets/Banners/Banner003.jpg'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const trustPillars = [
+  { icon: Shield, label: 'NAAC Accredited', sub: 'Recognized quality' },
+  { icon: Award, label: 'Merit-Based', sub: 'Transparent selection' },
+  { icon: Users, label: '60+ Year Legacy', sub: '40,000+ alumni' },
+]
+
+const courses = [
+  'B.Sc. Computer Science (Autonomous)',
+  'B.Com. Computer Applications',
+  'B.Com. (Honours / Regular)',
+  'B.A. (Journalism & Mass Comm.)',
+  'B.Voc. Software Development (UGC Funded)',
+  'B.B.A. Business Administration',
+  'Postgraduate Programmes (M.Com. / M.A.)',
+]
 
 export default function AdmissionsSection() {
-  const [modalOpen, setModalOpen] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(false)
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    course: 'B.Sc. Computer Science',
-  })
+  const [formData, setFormData] = useState({ fullName: '', email: '', phone: '', course: courses[0] })
+  const sectionRef = useRef<HTMLElement>(null)
+  const formRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLDivElement>(null)
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Ensure content is visible immediately even if ScrollTrigger is delayed
+    if (textRef.current) textRef.current.style.opacity = '1'
+    if (formRef.current) formRef.current.style.opacity = '1'
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        textRef.current,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 85%', once: true },
+        }
+      )
+      gsap.fromTo(
+        formRef.current,
+        { opacity: 0, y: 32, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          delay: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 85%', once: true },
+        }
+      )
+    }, sectionRef)
+
+    // Recalculate ScrollTrigger positions in case components above resized
+    ScrollTrigger.refresh()
+    return () => ctx.revert()
+  }, [])
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setFormSubmitted(true)
     setTimeout(() => {
       setFormSubmitted(false)
-      setModalOpen(false)
-      setFormData({
-        fullName: '',
-        email: '',
-        phone: '',
-        course: 'B.Sc. Computer Science',
-      })
-    }, 2200)
+      setFormData({ fullName: '', email: '', phone: '', course: courses[0] })
+    }, 3000)
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '0.75rem 1rem',
+    borderRadius: '10px',
+    border: '1.5px solid #e2e8f0',
+    fontSize: '0.85rem',
+    color: '#1e1b4b',
+    background: '#fff',
+    outline: 'none',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    fontFamily: 'Inter, sans-serif',
   }
 
   return (
     <section
       id="admissions"
-      className="relative w-full min-h-[500px] sm:min-h-[580px] lg:min-h-[640px] flex items-center overflow-hidden bg-[#0a0c12]"
+      ref={sectionRef}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        fontFamily: 'Inter, sans-serif',
+        minHeight: '580px',
+      }}
     >
-      {/* Background Banner with Student in Hallway */}
-      <div
-        className="absolute inset-0 w-full h-full bg-cover bg-right md:bg-[center_right] bg-no-repeat select-none pointer-events-none"
-        style={{ backgroundImage: `url(${admissionsBg})` }}
-      />
-
-      {/* Dark gradient overlay on the left for contrast and readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0c0e17]/95 via-[#0c0e17]/80 sm:via-[#0c0e17]/60 to-transparent z-10 pointer-events-none" />
-
-      {/* Left Content Area */}
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full relative z-20 py-16 sm:py-20 lg:py-24">
-        <div className="max-w-xl text-left">
-          
-          {/* Main Title matching reference design */}
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-white tracking-tight leading-[1.12] mb-5">
-            Ready to join <br />
-            the 2026-27 <br />
-            batch?
-          </h2>
-
-          {/* Subtitle */}
-          <p className="text-white/80 text-sm sm:text-base font-normal max-w-md mb-8 sm:mb-10 leading-relaxed">
-            Visit the campus, meet the faculty and start your application.
-          </p>
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-3.5 sm:gap-4">
-            <button
-              type="button"
-              onClick={() => setModalOpen(true)}
-              className="px-6 py-3.5 rounded-xl bg-[#f95721] hover:bg-[#ea580c] text-white font-medium text-sm sm:text-base shadow-lg shadow-orange-600/30 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
-            >
-              <span>Start your enquiry</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModalOpen(true)}
-              className="px-5 sm:px-6 py-3.5 rounded-xl bg-transparent hover:bg-white/10 text-white font-medium text-sm sm:text-base border border-white/60 active:scale-[0.98] transition-all cursor-pointer inline-flex items-center gap-2"
-            >
-              <span>Download admission guide</span>
-            </button>
-          </div>
-
-        </div>
+      {/* Full-bleed background */}
+      <div style={{ position: 'absolute', inset: 0 }}>
+        <img
+          src={banner003}
+          alt="Admissions"
+          loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(135deg, rgba(10,15,30,0.95) 0%, rgba(10,15,30,0.8) 50%, rgba(10,15,30,0.6) 100%)',
+          }}
+        />
       </div>
 
-      {/* ================= Interactive Application / Enquiry Modal ================= */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
 
-            {formSubmitted ? (
-              <div className="py-8 text-center space-y-4">
-                <div className="w-16 h-16 mx-auto rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
-                  <CheckCircle2 className="w-8 h-8" />
+      {/* Content */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 5,
+          maxWidth: '1280px',
+          margin: '0 auto',
+          padding: 'clamp(2rem, 3.5vw, 2.75rem) clamp(1.25rem, 4vw, 2rem)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))',
+          gap: 'clamp(2.5rem, 5vw, 5rem)',
+          alignItems: 'center',
+        }}
+      >
+        {/* LEFT: Text */}
+        <div ref={textRef}>
+          <div
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+              background: 'rgba(234,88,12,0.18)', border: '1px solid rgba(234,88,12,0.4)',
+              borderRadius: '100px', padding: '0.3rem 0.9rem', marginBottom: '1.5rem',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ea580c', boxShadow: '0 0 8px #ea580c' }} />
+            <span style={{ color: '#fdba74', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+              Admissions 2026–27 Open
+            </span>
+          </div>
+
+          <h2
+            style={{
+              fontFamily: 'Playfair Display, Georgia, serif',
+              fontWeight: 900,
+              fontSize: 'clamp(2.2rem, 5vw, 4rem)',
+              lineHeight: 1.08,
+              color: '#fff',
+              marginBottom: '1.25rem',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Ready to join
+            <br />
+            <span style={{ background: 'linear-gradient(90deg, #f97316, #fb923c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              the 2026-27 batch?
+            </span>
+          </h2>
+
+          <p
+            style={{
+              color: 'rgba(255,255,255,0.72)',
+              fontSize: 'clamp(0.9rem, 1.3vw, 1rem)',
+              lineHeight: 1.75,
+              maxWidth: '440px',
+              marginBottom: '2.5rem',
+            }}
+          >
+            Visit the campus, meet the faculty, and start your application.
+            Merit-based, transparent admissions with 100% placement assistance.
+          </p>
+
+          {/* Trust pillars */}
+          <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
+            {trustPillars.map(({ icon: Icon, label, sub }) => (
+              <div
+                key={label}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.65rem',
+                  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px', padding: '0.75rem 1rem', backdropFilter: 'blur(8px)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '34px', height: '34px', borderRadius: '8px',
+                    background: 'rgba(234,88,12,0.2)', border: '1px solid rgba(234,88,12,0.3)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}
+                >
+                  <Icon size={16} color="#fb923c" />
                 </div>
-                <h3 className="text-2xl font-bold text-[#1e1b4b]">
+                <div>
+                  <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.78rem', lineHeight: 1.2 }}>{label}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.63rem', fontWeight: 500 }}>{sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT: Form */}
+        <div ref={formRef}>
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '24px',
+              border: '1.5px solid rgba(255,255,255,0.4)',
+              padding: 'clamp(1.5rem, 3vw, 2.5rem)',
+              boxShadow: '0 32px 80px rgba(0,0,0,0.3)',
+            }}
+          >
+            {formSubmitted ? (
+              <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+                <div
+                  style={{
+                    width: '64px', height: '64px', borderRadius: '50%',
+                    background: 'rgba(16,185,129,0.1)', border: '2px solid rgba(16,185,129,0.3)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem',
+                  }}
+                >
+                  <CheckCircle2 size={30} color="#10b981" />
+                </div>
+                <h3 style={{ fontFamily: 'Playfair Display, serif', fontWeight: 800, fontSize: '1.5rem', color: '#1e1b4b', marginBottom: '0.75rem' }}>
                   Enquiry Submitted!
                 </h3>
-                <p className="text-sm text-slate-600 max-w-xs mx-auto">
-                  Thank you, <span className="text-[#1e1b4b] font-semibold">{formData.fullName}</span>. An admissions counselor will reach out shortly with the 2026-27 admission brochure.
+                <p style={{ color: '#64748b', fontSize: '0.85rem', lineHeight: 1.6, maxWidth: '300px', margin: '0 auto' }}>
+                  Thank you, <strong style={{ color: '#1e1b4b' }}>{formData.fullName}</strong>. An admissions counselor will reach out shortly with the 2026-27 brochure.
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-4">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase text-[#f95721] mb-1">
-                    <Sparkles className="w-3 h-3" />
-                    <span>2026-27 ADMISSIONS</span>
+              <form onSubmit={handleSubmit}>
+                {/* Form header */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#ea580c', marginBottom: '0.4rem' }}>
+                    2026-27 Admissions
                   </div>
-                  <h3 className="text-2xl font-bold text-[#1e1b4b]">
-                    Start Your College Enquiry
+                  <h3 style={{ fontFamily: 'Playfair Display, serif', fontWeight: 800, fontSize: '1.4rem', color: '#1e1b4b', lineHeight: 1.2 }}>
+                    Start Your Enquiry
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Fill in your details to receive syllabus brochures, fee structure, and counselor guidance.
+                  <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '0.3rem' }}>
+                    Get syllabus brochures, fee details & counselor guidance
                   </p>
                 </div>
 
-                <div className="space-y-3 pt-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+                  {/* Name */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Applicant Full Name *
+                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem', letterSpacing: '0.03em' }}>
+                      Full Name *
                     </label>
                     <input
-                      type="text"
-                      required
+                      type="text" required
                       placeholder="e.g. Rahul Sharma"
                       value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-[#f95721] focus:ring-1 focus:ring-[#f95721]"
+                      onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+                      style={inputStyle}
+                      onFocus={e => { e.currentTarget.style.borderColor = '#ea580c'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(234,88,12,0.1)' }}
+                      onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none' }}
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Email + Phone */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Email Address *
-                      </label>
+                      <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Email *</label>
                       <input
-                        type="email"
-                        required
+                        type="email" required
                         placeholder="you@email.com"
                         value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-[#f95721] focus:ring-1 focus:ring-[#f95721]"
+                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                        style={inputStyle}
+                        onFocus={e => { e.currentTarget.style.borderColor = '#ea580c'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(234,88,12,0.1)' }}
+                        onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none' }}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Phone Number *
-                      </label>
+                      <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Phone *</label>
                       <input
-                        type="tel"
-                        required
+                        type="tel" required
                         placeholder="+91 98765 43210"
                         value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-[#f95721] focus:ring-1 focus:ring-[#f95721]"
+                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                        style={inputStyle}
+                        onFocus={e => { e.currentTarget.style.borderColor = '#ea580c'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(234,88,12,0.1)' }}
+                        onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none' }}
                       />
                     </div>
                   </div>
 
+                  {/* Programme */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Programme of Interest
-                    </label>
+                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#475569', marginBottom: '0.3rem' }}>Programme of Interest</label>
                     <select
                       value={formData.course}
-                      onChange={(e) => setFormData({ ...formData, course: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-[#f95721] focus:ring-1 focus:ring-[#f95721] bg-white"
+                      onChange={e => setFormData({ ...formData, course: e.target.value })}
+                      style={{ ...inputStyle, cursor: 'pointer' }}
+                      onFocus={e => { e.currentTarget.style.borderColor = '#ea580c'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(234,88,12,0.1)' }}
+                      onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none' }}
                     >
-                      <option value="B.Sc. Computer Science">B.Sc. Computer Science (Autonomous)</option>
-                      <option value="B.Com. Computer Applications">B.Com. Computer Applications</option>
-                      <option value="B.Com. Honours">B.Com. (Honours / Regular)</option>
-                      <option value="B.A. Mass Communication">B.A. (Journalism &amp; Mass Comm.)</option>
-                      <option value="B.Voc. Software Development">B.Voc. Software Development (UGC Funded)</option>
-                      <option value="B.B.A. Bachelor of Business Admin">B.B.A. Business Administration</option>
-                      <option value="M.Sc. / M.Com. / M.A.">Postgraduate Programmes (M.Com. / M.A.)</option>
+                      {courses.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
-                </div>
 
-                <div className="pt-2">
+                  {/* Submit */}
                   <button
                     type="submit"
-                    className="w-full py-3.5 px-6 rounded-xl bg-[#f95721] hover:bg-[#ea580c] text-white font-semibold text-sm tracking-wide shadow-md shadow-orange-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    style={{
+                      width: '100%', padding: '0.9rem', borderRadius: '12px',
+                      background: 'linear-gradient(135deg, #ea580c, #c2410c)',
+                      color: '#fff', fontWeight: 700, fontSize: '0.88rem',
+                      border: 'none', cursor: 'pointer', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                      boxShadow: '0 8px 24px rgba(234,88,12,0.35)',
+                      transition: 'transform 0.2s, box-shadow 0.2s', marginTop: '0.25rem',
+                      fontFamily: 'Inter, sans-serif',
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(234,88,12,0.45)' }}
+                    onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(234,88,12,0.35)' }}
                   >
-                    <span>Submit Enquiry &amp; Get Brochure</span>
-                    <ArrowRight className="w-4 h-4" />
+                    Submit Enquiry & Get Brochure
+                    <ArrowRight size={16} />
                   </button>
                 </div>
               </form>
             )}
           </div>
         </div>
-      )}
+      </div>
     </section>
   )
 }

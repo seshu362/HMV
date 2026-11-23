@@ -1,212 +1,233 @@
 import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import convocationImg from '@/assets/About/0030.jpeg'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const stats = [
+  { label: 'Years of Legacy', value: 60, suffix: '+', big: true, accent: true },
+  { label: 'Departments', value: 9, suffix: '' },
+  { label: 'Industry Mentors', value: 50, suffix: '+' },
+  { label: 'Students Mentored', value: 3937, suffix: '+' },
+  { label: 'Alumni Worldwide', value: 40000, suffix: '+' },
+]
+
+function useCountUp(target: number, duration = 1800, trigger: boolean) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    if (!trigger) return
+    let frame: number
+    const start = performance.now()
+    const run = (now: number) => {
+      const p = Math.min((now - start) / duration, 1)
+      const ease = 1 - Math.pow(1 - p, 3)
+      setCount(Math.floor(ease * target))
+      if (p < 1) frame = requestAnimationFrame(run)
+      else setCount(target)
+    }
+    frame = requestAnimationFrame(run)
+    return () => cancelAnimationFrame(frame)
+  }, [trigger, target, duration])
+  return count
+}
+
+function StatCard({ stat, trigger, delay }: { stat: typeof stats[0]; trigger: boolean; delay: number }) {
+  const count = useCountUp(stat.value, 1800, trigger)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  return (
+    <div
+      ref={cardRef}
+      style={{
+        background: stat.big ? 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)' : '#fff',
+        borderRadius: '20px',
+        padding: stat.big ? '2.5rem 2rem' : '1.75rem 1.5rem',
+        boxShadow: stat.big
+          ? '0 20px 60px rgba(234,88,12,0.35)'
+          : '0 4px 24px rgba(0,0,0,0.06)',
+        border: stat.big ? 'none' : '1.5px solid rgba(234,88,12,0.08)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s',
+        cursor: 'default',
+        gridColumn: stat.big ? 'span 2' : 'span 1',
+        animationDelay: `${delay}ms`,
+      }}
+      onMouseOver={e => {
+        e.currentTarget.style.transform = 'translateY(-4px) scale(1.01)'
+        e.currentTarget.style.boxShadow = stat.big
+          ? '0 32px 80px rgba(234,88,12,0.45)'
+          : '0 12px 40px rgba(0,0,0,0.1)'
+      }}
+      onMouseOut={e => {
+        e.currentTarget.style.transform = 'translateY(0) scale(1)'
+        e.currentTarget.style.boxShadow = stat.big
+          ? '0 20px 60px rgba(234,88,12,0.35)'
+          : '0 4px 24px rgba(0,0,0,0.06)'
+      }}
+    >
+      {/* Concentric ring decoration for big card */}
+      {stat.big && (
+        <>
+          <div style={{ position: 'absolute', top: '50%', right: '-20px', transform: 'translateY(-50%)', width: '140px', height: '140px', borderRadius: '50%', border: '1.5px solid rgba(255,255,255,0.15)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: '50%', right: '-50px', transform: 'translateY(-50%)', width: '200px', height: '200px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)', pointerEvents: 'none' }} />
+        </>
+      )}
+
+      <div
+        style={{
+          fontFamily: 'Playfair Display, Georgia, serif',
+          fontWeight: 900,
+          fontSize: stat.big ? 'clamp(3rem, 5vw, 4.5rem)' : 'clamp(1.8rem, 3vw, 2.8rem)',
+          color: stat.big ? '#fff' : '#1e1b4b',
+          lineHeight: 1,
+          marginBottom: '0.5rem',
+        }}
+      >
+        {stat.value >= 1000 ? `${Math.floor(count / 1000)}K` : count}{stat.suffix}
+      </div>
+      <div
+        style={{
+          fontSize: '0.72rem',
+          fontWeight: 600,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: stat.big ? 'rgba(255,255,255,0.75)' : '#94a3b8',
+        }}
+      >
+        {stat.label}
+      </div>
+    </div>
+  )
+}
 
 export default function LegacySection() {
   const sectionRef = useRef<HTMLElement>(null)
-  const [counts, setCounts] = useState({
-    legacy: 0,
-    departments: 0,
-    mentors: 0,
-    mentees: 0,
-    alumni: 0,
-  })
-  const [hasAnimated, setHasAnimated] = useState(false)
+  const bgRef = useRef<HTMLDivElement>(null)
+  const [triggered, setTriggered] = useState(false)
 
-  // Smooth Count-Up Animation when scrolled into view
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasAnimated) {
-          setHasAnimated(true)
-          const startTime = performance.now()
-          const duration = 1800 // 1.8 seconds
-
-          const animate = (currentTime: number) => {
-            const elapsed = currentTime - startTime
-            const progress = Math.min(elapsed / duration, 1)
-            // Ease out cubic
-            const ease = 1 - Math.pow(1 - progress, 3)
-
-            setCounts({
-              legacy: Math.floor(ease * 60),
-              departments: Math.floor(ease * 9),
-              mentors: Math.floor(ease * 50),
-              mentees: Math.floor(ease * 3937),
-              alumni: Math.floor(ease * 40000),
-            })
-
-            if (progress < 1) {
-              requestAnimationFrame(animate)
-            } else {
-              setCounts({
-                legacy: 60,
-                departments: 9,
-                mentors: 50,
-                mentees: 3937,
-                alumni: 40000,
-              })
-            }
-          }
-
-          requestAnimationFrame(animate)
-        }
-      },
+    // IntersectionObserver for count-up
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setTriggered(true) },
       { threshold: 0.2 }
     )
+    if (sectionRef.current) obs.observe(sectionRef.current)
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
+    // Parallax bg
+    const ctx = gsap.context(() => {
+      gsap.to(bgRef.current, {
+        yPercent: -20,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
+    }, sectionRef)
+
+    return () => {
+      obs.disconnect()
+      ctx.revert()
     }
-
-    return () => observer.disconnect()
-  }, [hasAnimated])
+  }, [])
 
   return (
     <section
       id="legacy"
       ref={sectionRef}
-      className="relative z-10 pt-4 sm:pt-6 md:pt-8 pb-12 sm:pb-16 md:pb-20 bg-white overflow-hidden"
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(180deg, #fff 0%, #fdf8f3 100%)',
+        padding: 'clamp(2rem, 3.5vw, 2.75rem) clamp(1.25rem, 4vw, 2rem)',
+        fontFamily: 'Inter, sans-serif',
+      }}
     >
-      {/* Header Container */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
-        {/* Tag badge */}
-        <div className="inline-flex items-center gap-2 justify-center">
-          <span className="w-2 h-2 rounded-full bg-[#ff5722]" />
-          <span className="text-xs font-bold uppercase tracking-widest text-[#ff5722]">
-            WHAT WE HAVE
-          </span>
+      {/* Parallax background image */}
+      <div
+        ref={bgRef}
+        style={{
+          position: 'absolute',
+          inset: '-20%',
+          backgroundImage: `url(${convocationImg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.06,
+          zIndex: 0,
+        }}
+      />
+
+      <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        {/* Section header */}
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
+          <div className="section-label" style={{ justifyContent: 'center', marginBottom: '1rem' }}>
+            Our Numbers
+          </div>
+          <h2
+            style={{
+              fontFamily: 'Playfair Display, Georgia, serif',
+              fontWeight: 800,
+              fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+              lineHeight: 1.1,
+              color: '#1e1b4b',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Decades of Impact,
+            <br />
+            <span style={{ background: 'linear-gradient(135deg, #ea580c, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              Measured in Thousands
+            </span>
+          </h2>
         </div>
 
-        {/* Heading */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1e1b4b] tracking-tight mt-3">
-          Six decades of shaping learners
-        </h2>
-
-        {/* Subtitle */}
-        <p className="text-slate-500 text-sm sm:text-base mt-2 max-w-xl mx-auto">
-          A legacy built by mentors, carried forward by thousands of students and alumni.
-        </p>
-      </div>
-
-      {/* Cards Layout - Matching Figma 100% */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 mt-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5 items-stretch">
-          
-          {/* Big Orange Card: Years of Legacy */}
-          <div className="md:col-span-5 bg-[#ff5722] text-white rounded-3xl p-7 sm:p-9 shadow-xl shadow-orange-500/15 flex flex-col justify-between relative overflow-hidden group">
-            {/* Top Tag */}
-            <div>
-              <span className="text-white/80 text-[11px] font-bold tracking-widest uppercase">
-                YEARS OF LEGACY
-              </span>
-            </div>
-
-            {/* Giant Display Stat */}
-            <div className="my-6 sm:my-8">
-              <span className="text-white font-extrabold text-7xl sm:text-8xl tracking-tight leading-none">
-                {counts.legacy}+
-              </span>
-            </div>
-
-            {/* Description */}
-            <div>
-              <p className="text-white/95 text-sm sm:text-base leading-relaxed font-normal">
-                Over six decades of education rooted in values, open to every learner.
-              </p>
-            </div>
-          </div>
-
-          {/* 2x2 Grid of 4 White Stat Cards */}
-          <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
-            
-            {/* 1. Departments */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md border border-slate-100 flex flex-col justify-between transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff5722]" />
-                <span className="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
-                  DEPARTMENTS
-                </span>
-              </div>
-              <div className="my-3">
-                <span className="text-[#1e1b4b] text-4xl sm:text-5xl font-extrabold tracking-tight">
-                  {counts.departments < 10 ? `0${counts.departments}` : counts.departments}
-                </span>
-              </div>
-              <p className="text-slate-500 text-xs sm:text-sm leading-snug">
-                Academic departments offering a range of programmes
-              </p>
-            </div>
-
-            {/* 2. Mentors */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md border border-slate-100 flex flex-col justify-between transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff5722]" />
-                <span className="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
-                  MENTORS
-                </span>
-              </div>
-              <div className="my-3">
-                <span className="text-[#1e1b4b] text-4xl sm:text-5xl font-extrabold tracking-tight">
-                  {counts.mentors}
-                </span>
-              </div>
-              <p className="text-slate-500 text-xs sm:text-sm leading-snug">
-                Dedicated mentors guiding students every day
-              </p>
-            </div>
-
-            {/* 3. Mentees */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md border border-slate-100 flex flex-col justify-between transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff5722]" />
-                <span className="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
-                  MENTEES
-                </span>
-              </div>
-              <div className="my-3">
-                <span className="text-[#1e1b4b] text-4xl sm:text-5xl font-extrabold tracking-tight">
-                  {counts.mentees.toLocaleString()}
-                </span>
-              </div>
-              <p className="text-slate-500 text-xs sm:text-sm leading-snug">
-                Students currently supported by our mentors
-              </p>
-            </div>
-
-            {/* 4. Alumni */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md border border-slate-100 flex flex-col justify-between transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff5722]" />
-                <span className="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
-                  ALUMNI
-                </span>
-              </div>
-              <div className="my-3">
-                <span className="text-[#1e1b4b] text-4xl sm:text-5xl font-extrabold tracking-tight">
-                  {counts.alumni.toLocaleString()}
-                </span>
-              </div>
-              <p className="text-slate-500 text-xs sm:text-sm leading-snug">
-                Graduates who have passed through our college
-              </p>
-            </div>
-
-          </div>
-
+        {/* Stats grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
+            gap: '1.25rem',
+            alignItems: 'stretch',
+          }}
+        >
+          {stats.map((stat, i) => (
+            <StatCard key={stat.label} stat={stat} trigger={triggered} delay={i * 100} />
+          ))}
         </div>
-      </div>
 
-      {/* Convocation Graduates Background Image with Soft Vignette/Gradient Fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 sm:h-80 md:h-96 pointer-events-none select-none z-0 overflow-hidden">
-        <img
-          src="/convocation_graduates.png"
-          alt="Hindi Mahavidyalaya Graduates Convocation"
-          className="w-full h-full object-cover object-top opacity-85"
-        />
-        {/* Soft gradient masks to blend cleanly into white background */}
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-white via-white/80 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white via-white/80 to-transparent" />
-        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white to-transparent" />
+        {/* Bottom quote */}
+        <div
+          style={{
+            marginTop: 'clamp(2rem, 4vw, 3.5rem)',
+            textAlign: 'center',
+            padding: '1.5rem',
+            borderTop: '1px solid rgba(234,88,12,0.12)',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: 'Playfair Display, Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)',
+              color: '#475569',
+              maxWidth: '600px',
+              margin: '0 auto',
+              lineHeight: 1.7,
+            }}
+          >
+            "Shaping minds, building careers, and inspiring generations since 1965."
+          </p>
+          <div style={{ marginTop: '0.75rem', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#ea580c' }}>
+            Hindi Mahavidyalaya, Hyderabad
+          </div>
+        </div>
       </div>
     </section>
   )
