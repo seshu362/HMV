@@ -49,12 +49,11 @@ export default function TopHeader() {
     <div className="top-header-wrapper" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Row 1: Crimson Announcement Ticker */}
       <div
-        className="top-header-ticker"
+        className="top-header-ticker h-[30px] sm:h-[34px]"
         style={{
           background: 'linear-gradient(90deg, #7f1d1d 0%, #991b1b 50%, #7f1d1d 100%)',
           overflow: 'hidden',
           position: 'relative',
-          height: '34px',
           display: 'flex',
           alignItems: 'center',
         }}
@@ -69,19 +68,19 @@ export default function TopHeader() {
             fontSize: '0.6rem',
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            padding: '0 1rem',
+            padding: '0 0.75rem',
             height: '100%',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
+            gap: '0.35rem',
             zIndex: 10,
             whiteSpace: 'nowrap',
           }}
         >
           <span
             style={{
-              width: '6px',
-              height: '6px',
+              width: '5px',
+              height: '5px',
               borderRadius: '50%',
               background: '#fff',
               animation: 'pulseRing 1.6s ease-out infinite',
@@ -95,10 +94,10 @@ export default function TopHeader() {
         <div
           style={{
             position: 'absolute',
-            left: '90px',
+            left: '80px',
             top: 0,
             bottom: 0,
-            width: '40px',
+            width: '30px',
             background: 'linear-gradient(to right, #991b1b, transparent)',
             zIndex: 5,
             pointerEvents: 'none',
@@ -138,18 +137,15 @@ export default function TopHeader() {
         />
       </div>
 
-      {/* Row 2: Dark Navy Utility Bar */}
+      {/* Row 2: Dark Navy Utility Bar - Clean single row on desktop, hidden on mobile to avoid vertical screen clutter */}
       <div
+        className="hidden md:flex items-center justify-between"
         style={{
           background: '#0f172a',
           borderBottom: '1px solid rgba(234,88,12,0.15)',
           padding: '0 1rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           gap: '1rem',
           minHeight: '38px',
-          flexWrap: 'wrap',
         }}
       >
         {/* Left: Contact Info */}

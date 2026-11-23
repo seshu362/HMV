@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react'
+import { Menu, X, ChevronDown, ChevronRight, Phone, Mail, LogIn } from 'lucide-react'
 import logo from '@/assets/logo.svg'
 
 interface NavItem {
@@ -134,14 +134,14 @@ export default function Navbar() {
         style={{ fontFamily: 'Inter, sans-serif' }}
       >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-18">
+          <div className="flex items-center justify-between h-14 sm:h-16 md:h-18">
             {/* Logo */}
             <button
               onClick={() => scrollTo('#hero')}
               className="flex items-center flex-shrink-0 group cursor-pointer bg-transparent border-none p-0"
               style={{ textDecoration: 'none' }}
             >
-              <img src={logo} alt="HMV Logo" className="h-12 w-auto" />
+              <img src={logo} alt="HMV Logo" className="h-10 sm:h-12 w-auto" />
             </button>
 
             {/* Desktop Nav */}
@@ -345,8 +345,47 @@ export default function Navbar() {
           ))}
         </div>
 
+        {/* Quick Contact & Logins for Mobile */}
+        <div className="p-3.5 mx-3 mb-2 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+            Quick Services
+          </div>
+          <div className="flex flex-col gap-2">
+            <a
+              href="tel:+914023261380"
+              className="flex items-center gap-2 text-slate-700 hover:text-[#ea580c] transition-colors no-underline"
+            >
+              <Phone size={13} className="text-[#ea580c]" />
+              <span className="font-medium">+91 40-2326-1380</span>
+            </a>
+            <a
+              href="mailto:info@hindimv.edu.in"
+              className="flex items-center gap-2 text-slate-700 hover:text-[#ea580c] transition-colors no-underline"
+            >
+              <Mail size={13} className="text-[#ea580c]" />
+              <span className="font-medium">info@hindimv.edu.in</span>
+            </a>
+            <div className="pt-2 mt-1 border-t border-slate-200/60 flex items-center gap-3">
+              <a
+                href="#"
+                className="flex items-center gap-1.5 text-xs font-semibold text-[#1e1b4b] hover:text-[#ea580c] transition-colors no-underline"
+              >
+                <LogIn size={13} className="text-[#ea580c]" />
+                Student Login
+              </a>
+              <span className="text-slate-300">•</span>
+              <a
+                href="#"
+                className="text-xs font-semibold text-slate-500 hover:text-[#ea580c] transition-colors no-underline"
+              >
+                Admin Login
+              </a>
+            </div>
+          </div>
+        </div>
+
         {/* Drawer CTA */}
-        <div style={{ padding: '1rem 1.25rem 1.5rem', borderTop: '1px solid #f1f5f9' }}>
+        <div style={{ padding: '0.75rem 1.25rem 1.5rem', borderTop: '1px solid #f1f5f9' }}>
           <button
             onClick={() => scrollTo('#admissions')}
             className="btn-primary w-full justify-center"
