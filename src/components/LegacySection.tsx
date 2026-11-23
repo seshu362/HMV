@@ -134,43 +134,43 @@ function ModernStatCard({
 
   return (
     <div
-      className={`group relative p-6 sm:p-7 rounded-2xl sm:rounded-3xl transition-all duration-300 flex flex-col justify-between ${
+      className={`group relative p-5 sm:p-6 lg:p-7 rounded-2xl sm:rounded-3xl transition-all duration-300 flex flex-col justify-between ${
         stat.featured
-          ? 'bg-gradient-to-br from-orange-50/70 via-white to-white border-2 border-orange-200 shadow-[0_4px_24px_rgba(234,88,12,0.08)] hover:shadow-[0_16px_36px_rgba(234,88,12,0.18)] hover:-translate-y-1'
-          : 'bg-white border border-slate-200/80 shadow-[0_2px_16px_rgba(30,27,75,0.03)] hover:shadow-[0_12px_32px_rgba(30,27,75,0.08)] hover:border-orange-200/60 hover:-translate-y-1'
+          ? 'bg-gradient-to-br from-orange-50/70 via-white to-white border-2 border-orange-200 shadow-[0_4px_20px_rgba(234,88,12,0.08)] hover:shadow-[0_16px_36px_rgba(234,88,12,0.18)] hover:-translate-y-1 active:scale-[0.99]'
+          : 'bg-white border border-slate-200/80 shadow-[0_2px_14px_rgba(30,27,75,0.03)] hover:shadow-[0_12px_30px_rgba(30,27,75,0.08)] hover:border-orange-200/60 hover:-translate-y-1 active:scale-[0.99]'
       }`}
     >
       {/* Top row: Icon badge + Tag pill */}
       <div>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2.5">
           <div
-            className={`w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${stat.accentBg} ${stat.accentText}`}
+            className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 ${stat.accentBg} ${stat.accentText}`}
           >
-            <Icon size={22} strokeWidth={2.2} />
+            <Icon className="w-5 h-5 sm:w-[22px] sm:h-[22px]" strokeWidth={2.2} />
           </div>
           <span
-            className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${stat.accentBg} ${stat.accentText} border ${stat.accentBorder}`}
+            className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shrink-0 ${stat.accentBg} ${stat.accentText} border ${stat.accentBorder}`}
           >
             {stat.tag}
           </span>
         </div>
 
-        {/* Big Crisp Numeral */}
+        {/* Big Crisp Numeral with Responsive Scaling */}
         <div
-          className="font-serif font-black text-4xl sm:text-5xl text-[#1e1b4b] tracking-tight mt-5 mb-1.5 leading-none group-hover:text-[#ea580c] transition-colors duration-200"
+          className="font-serif font-black text-3xl sm:text-4xl lg:text-5xl text-[#1e1b4b] tracking-tight mt-4 sm:mt-5 mb-1 sm:mb-1.5 leading-none group-hover:text-[#ea580c] transition-colors duration-200"
           style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
         >
           {displayValue}
         </div>
 
         {/* Title */}
-        <h3 className="text-base sm:text-lg font-bold text-[#1e1b4b] tracking-tight">
+        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-[#1e1b4b] tracking-tight leading-snug">
           {stat.label}
         </h3>
       </div>
 
       {/* Subtext description */}
-      <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mt-3 pt-3 border-t border-slate-100">
+      <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-slate-100">
         {stat.subtext}
       </p>
     </div>
@@ -219,7 +219,7 @@ export default function LegacySection() {
       className="relative w-full overflow-hidden select-none"
       style={{
         background: 'linear-gradient(180deg, #ffffff 0%, #faf8f5 50%, #ffffff 100%)',
-        padding: 'clamp(2rem, 3.5vw, 2.75rem) clamp(1.25rem, 4vw, 2rem)',
+        padding: 'clamp(2rem, 3.5vw, 2.75rem) clamp(1rem, 3vw, 2rem)',
         fontFamily: 'Inter, sans-serif',
       }}
     >
@@ -245,18 +245,18 @@ export default function LegacySection() {
         }}
       />
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="max-w-4xl mx-auto px-4 text-center mb-6 sm:mb-8">
-          <div className="inline-flex items-center gap-2 justify-center mb-2 px-3.5 py-1 rounded-full bg-orange-50 border border-orange-200/70 shadow-xs">
+        <div className="max-w-4xl mx-auto text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-2 justify-center mb-2 px-3 sm:px-3.5 py-1 rounded-full bg-orange-50 border border-orange-200/70 shadow-xs">
             <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#ea580c]">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#ea580c]">
               SIX DECADES OF EXCELLENCE
             </span>
           </div>
 
           <h2
-            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#1e1b4b] leading-tight"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#1e1b4b] leading-tight"
             style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
           >
             Decades of Impact,{' '}
@@ -266,27 +266,32 @@ export default function LegacySection() {
           </h2>
 
           <p className="text-slate-600 text-xs sm:text-sm md:text-base mt-2 max-w-2xl mx-auto leading-relaxed">
-            Celebrating sixty years of academic rigor, corporate employability, and community leadership under Osmania University.
+            Celebrating sixty years of academic distinction, corporate employability, and community leadership under Osmania University.
           </p>
         </div>
 
-        {/* Symmetrical 6-Card Bento Metrics Grid (3x2 on desktop, 2x3 on tablet, 1 col on mobile) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
+        {/* 
+          Fully Responsive Symmetrical Bento Metrics Grid:
+          - Mobile (xs/default): 1 clean vertical column with comfortable touch target and card padding
+          - Tablet (sm & md, 640px to 1023px): 2 balanced columns (3 rows of 2 cards each)
+          - Desktop (lg+, 1024px+): 3 balanced columns (2 rows of 3 cards each)
+        */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5 lg:gap-6 items-stretch">
           {statsData.map((stat) => (
             <ModernStatCard key={stat.id} stat={stat} trigger={triggered} />
           ))}
         </div>
 
-        {/* Bottom Commemorative Trust Bar */}
-        <div className="mt-8 sm:mt-10 max-w-4xl mx-auto px-4">
-          <div className="rounded-2xl bg-gradient-to-r from-orange-50/70 via-amber-50/40 to-orange-50/70 border border-orange-200/60 p-5 sm:p-6 text-center shadow-xs">
+        {/* Bottom Commemorative Trust Bar: Adaptive padding & wrapping */}
+        <div className="mt-6 sm:mt-8 lg:mt-10 max-w-4xl mx-auto">
+          <div className="rounded-2xl bg-gradient-to-r from-orange-50/70 via-amber-50/40 to-orange-50/70 border border-orange-200/60 p-4 sm:p-5 lg:p-6 text-center shadow-xs">
             <p
-              className="text-slate-700 italic text-sm sm:text-base leading-relaxed max-w-2xl mx-auto"
+              className="text-slate-700 italic text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mx-auto"
               style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
             >
               &ldquo;Shaping minds, building careers, and inspiring generations since 1965.&rdquo;
             </p>
-            <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-[11px] font-bold tracking-wider uppercase text-slate-500">
+            <div className="mt-2.5 sm:mt-3 flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-4 gap-y-1.5 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase text-slate-500">
               <span className="text-[#ea580c]">Hindi Mahavidyalaya</span>
               <span className="text-slate-300">•</span>
               <span>Estd. 1965</span>
