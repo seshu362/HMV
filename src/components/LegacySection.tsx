@@ -1,16 +1,102 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { GraduationCap, Users, Award, BookOpen, Briefcase, Sparkles } from 'lucide-react'
 import convocationImg from '@/assets/About/0030.jpeg'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const stats = [
-  { label: 'Years of Legacy', value: 60, suffix: '+', big: true, accent: true },
-  { label: 'Departments', value: 9, suffix: '' },
-  { label: 'Industry Mentors', value: 50, suffix: '+' },
-  { label: 'Students Mentored', value: 3937, suffix: '+' },
-  { label: 'Alumni Worldwide', value: 40000, suffix: '+' },
+interface StatItem {
+  id: string
+  label: string
+  value: number
+  suffix: string
+  displayFormat?: (val: number) => string
+  subtext: string
+  tag: string
+  icon: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>
+  accentBg: string
+  accentText: string
+  accentBorder: string
+  featured?: boolean
+}
+
+const statsData: StatItem[] = [
+  {
+    id: 'legacy',
+    label: 'Years of Academic Distinction',
+    value: 60,
+    suffix: '+',
+    subtext: 'Pioneering higher education in Hyderabad with autonomous curriculum and academic excellence since 1965.',
+    tag: 'Estd. 1965',
+    icon: GraduationCap,
+    accentBg: 'bg-orange-50',
+    accentText: 'text-[#ea580c]',
+    accentBorder: 'border-orange-200/80',
+    featured: true,
+  },
+  {
+    id: 'alumni',
+    label: 'Global Alumni Network',
+    value: 40000,
+    suffix: '+',
+    displayFormat: (v) => `${Math.floor(v / 1000)}K+`,
+    subtext: 'Thriving leaders spanning Fortune 500 corporations, public administration, entrepreneurship, and global research.',
+    tag: 'Worldwide',
+    icon: Users,
+    accentBg: 'bg-indigo-50',
+    accentText: 'text-[#1e1b4b]',
+    accentBorder: 'border-indigo-100',
+  },
+  {
+    id: 'placements',
+    label: 'Placement Support',
+    value: 100,
+    suffix: '%',
+    subtext: 'Dedicated career development, interview masterclasses, and corporate placement drives with 50+ corporate recruiters.',
+    tag: 'Career Ready',
+    icon: Award,
+    accentBg: 'bg-emerald-50',
+    accentText: 'text-emerald-700',
+    accentBorder: 'border-emerald-100',
+  },
+  {
+    id: 'departments',
+    label: 'Autonomous Departments',
+    value: 9,
+    suffix: '',
+    subtext: 'Specialized faculties across Computer Science, Artificial Intelligence, Commerce, Management, Arts & Vocational IT.',
+    tag: 'Autonomous',
+    icon: BookOpen,
+    accentBg: 'bg-blue-50',
+    accentText: 'text-blue-700',
+    accentBorder: 'border-blue-100',
+  },
+  {
+    id: 'mentors',
+    label: 'Industry Mentors & Leaders',
+    value: 50,
+    suffix: '+',
+    subtext: 'Executive guest lectures, industrial visits, live project juries, and corporate skill-building workshops.',
+    tag: 'Industry Tie-ups',
+    icon: Briefcase,
+    accentBg: 'bg-rose-50',
+    accentText: 'text-rose-700',
+    accentBorder: 'border-rose-100',
+  },
+  {
+    id: 'students',
+    label: 'Active Student Scholars',
+    value: 3900,
+    suffix: '+',
+    displayFormat: (v) => `${(v / 1000).toFixed(1)}K+`,
+    subtext: 'Empowering future leaders through cutting-edge laboratories, active collegiate clubs, sports, and NCC/NSS vitality.',
+    tag: 'Campus Vitality',
+    icon: Sparkles,
+    accentBg: 'bg-amber-50',
+    accentText: 'text-amber-700',
+    accentBorder: 'border-amber-100',
+  },
 ]
 
 function useCountUp(target: number, duration = 1800, trigger: boolean) {
@@ -32,75 +118,61 @@ function useCountUp(target: number, duration = 1800, trigger: boolean) {
   return count
 }
 
-function StatCard({ stat, trigger, delay }: { stat: typeof stats[0]; trigger: boolean; delay: number }) {
+function ModernStatCard({
+  stat,
+  trigger,
+}: {
+  stat: StatItem
+  trigger: boolean
+}) {
   const count = useCountUp(stat.value, 1800, trigger)
-  const cardRef = useRef<HTMLDivElement>(null)
+  const Icon = stat.icon
+
+  const displayValue = stat.displayFormat
+    ? stat.displayFormat(count)
+    : `${count}${stat.suffix}`
 
   return (
     <div
-      ref={cardRef}
-      style={{
-        background: stat.big ? 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)' : '#fff',
-        borderRadius: '20px',
-        padding: stat.big ? '2.5rem 2rem' : '1.75rem 1.5rem',
-        boxShadow: stat.big
-          ? '0 20px 60px rgba(234,88,12,0.35)'
-          : '0 4px 24px rgba(0,0,0,0.06)',
-        border: stat.big ? 'none' : '1.5px solid rgba(234,88,12,0.08)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-        transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s',
-        cursor: 'default',
-        gridColumn: stat.big ? 'span 2' : 'span 1',
-        animationDelay: `${delay}ms`,
-      }}
-      onMouseOver={e => {
-        e.currentTarget.style.transform = 'translateY(-4px) scale(1.01)'
-        e.currentTarget.style.boxShadow = stat.big
-          ? '0 32px 80px rgba(234,88,12,0.45)'
-          : '0 12px 40px rgba(0,0,0,0.1)'
-      }}
-      onMouseOut={e => {
-        e.currentTarget.style.transform = 'translateY(0) scale(1)'
-        e.currentTarget.style.boxShadow = stat.big
-          ? '0 20px 60px rgba(234,88,12,0.35)'
-          : '0 4px 24px rgba(0,0,0,0.06)'
-      }}
+      className={`group relative p-6 sm:p-7 rounded-2xl sm:rounded-3xl transition-all duration-300 flex flex-col justify-between ${
+        stat.featured
+          ? 'bg-gradient-to-br from-orange-50/70 via-white to-white border-2 border-orange-200 shadow-[0_4px_24px_rgba(234,88,12,0.08)] hover:shadow-[0_16px_36px_rgba(234,88,12,0.18)] hover:-translate-y-1'
+          : 'bg-white border border-slate-200/80 shadow-[0_2px_16px_rgba(30,27,75,0.03)] hover:shadow-[0_12px_32px_rgba(30,27,75,0.08)] hover:border-orange-200/60 hover:-translate-y-1'
+      }`}
     >
-      {/* Concentric ring decoration for big card */}
-      {stat.big && (
-        <>
-          <div style={{ position: 'absolute', top: '50%', right: '-20px', transform: 'translateY(-50%)', width: '140px', height: '140px', borderRadius: '50%', border: '1.5px solid rgba(255,255,255,0.15)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', top: '50%', right: '-50px', transform: 'translateY(-50%)', width: '200px', height: '200px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)', pointerEvents: 'none' }} />
-        </>
-      )}
+      {/* Top row: Icon badge + Tag pill */}
+      <div>
+        <div className="flex items-center justify-between gap-3">
+          <div
+            className={`w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${stat.accentBg} ${stat.accentText}`}
+          >
+            <Icon size={22} strokeWidth={2.2} />
+          </div>
+          <span
+            className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${stat.accentBg} ${stat.accentText} border ${stat.accentBorder}`}
+          >
+            {stat.tag}
+          </span>
+        </div>
 
-      <div
-        style={{
-          fontFamily: 'Playfair Display, Georgia, serif',
-          fontWeight: 900,
-          fontSize: stat.big ? 'clamp(3rem, 5vw, 4.5rem)' : 'clamp(1.8rem, 3vw, 2.8rem)',
-          color: stat.big ? '#fff' : '#1e1b4b',
-          lineHeight: 1,
-          marginBottom: '0.5rem',
-        }}
-      >
-        {stat.value >= 1000 ? `${Math.floor(count / 1000)}K` : count}{stat.suffix}
+        {/* Big Crisp Numeral */}
+        <div
+          className="font-serif font-black text-4xl sm:text-5xl text-[#1e1b4b] tracking-tight mt-5 mb-1.5 leading-none group-hover:text-[#ea580c] transition-colors duration-200"
+          style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
+        >
+          {displayValue}
+        </div>
+
+        {/* Title */}
+        <h3 className="text-base sm:text-lg font-bold text-[#1e1b4b] tracking-tight">
+          {stat.label}
+        </h3>
       </div>
-      <div
-        style={{
-          fontSize: '0.72rem',
-          fontWeight: 600,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: stat.big ? 'rgba(255,255,255,0.75)' : '#94a3b8',
-        }}
-      >
-        {stat.label}
-      </div>
+
+      {/* Subtext description */}
+      <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mt-3 pt-3 border-t border-slate-100">
+        {stat.subtext}
+      </p>
     </div>
   )
 }
@@ -113,15 +185,17 @@ export default function LegacySection() {
   useEffect(() => {
     // IntersectionObserver for count-up
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setTriggered(true) },
-      { threshold: 0.2 }
+      ([entry]) => {
+        if (entry.isIntersecting) setTriggered(true)
+      },
+      { threshold: 0.15 }
     )
     if (sectionRef.current) obs.observe(sectionRef.current)
 
-    // Parallax bg
+    // Parallax background
     const ctx = gsap.context(() => {
       gsap.to(bgRef.current, {
-        yPercent: -20,
+        yPercent: -15,
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -142,15 +216,22 @@ export default function LegacySection() {
     <section
       id="legacy"
       ref={sectionRef}
+      className="relative w-full overflow-hidden select-none"
       style={{
-        position: 'relative',
-        overflow: 'hidden',
-        background: 'linear-gradient(180deg, #fff 0%, #fdf8f3 100%)',
+        background: 'linear-gradient(180deg, #ffffff 0%, #faf8f5 50%, #ffffff 100%)',
         padding: 'clamp(2rem, 3.5vw, 2.75rem) clamp(1.25rem, 4vw, 2rem)',
         fontFamily: 'Inter, sans-serif',
       }}
     >
-      {/* Parallax background image */}
+      {/* Soft Ambient Radial Glow */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full pointer-events-none opacity-40 blur-3xl"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(234,88,12,0.12) 0%, transparent 70%)',
+        }}
+      />
+
+      {/* Parallax archival background watermark */}
       <div
         ref={bgRef}
         style={{
@@ -159,73 +240,63 @@ export default function LegacySection() {
           backgroundImage: `url(${convocationImg})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: 0.06,
+          opacity: 0.04,
           zIndex: 0,
         }}
       />
 
-      <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        {/* Section header */}
-        <div style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
-          <div className="section-label" style={{ justifyContent: 'center', marginBottom: '1rem' }}>
-            Our Numbers
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Section Header */}
+        <div className="max-w-4xl mx-auto px-4 text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-2 justify-center mb-2 px-3.5 py-1 rounded-full bg-orange-50 border border-orange-200/70 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#ea580c]">
+              SIX DECADES OF EXCELLENCE
+            </span>
           </div>
+
           <h2
-            style={{
-              fontFamily: 'Playfair Display, Georgia, serif',
-              fontWeight: 800,
-              fontSize: 'clamp(1.8rem, 4vw, 3rem)',
-              lineHeight: 1.1,
-              color: '#1e1b4b',
-              letterSpacing: '-0.02em',
-            }}
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#1e1b4b] leading-tight"
+            style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
           >
-            Decades of Impact,
-            <br />
-            <span style={{ background: 'linear-gradient(135deg, #ea580c, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            Decades of Impact,{' '}
+            <span className="bg-gradient-to-r from-[#ea580c] to-[#f97316] bg-clip-text text-transparent">
               Measured in Thousands
             </span>
           </h2>
+
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base mt-2 max-w-2xl mx-auto leading-relaxed">
+            Celebrating sixty years of academic rigor, corporate employability, and community leadership under Osmania University.
+          </p>
         </div>
 
-        {/* Stats grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
-            gap: '1.25rem',
-            alignItems: 'stretch',
-          }}
-        >
-          {stats.map((stat, i) => (
-            <StatCard key={stat.label} stat={stat} trigger={triggered} delay={i * 100} />
+        {/* Symmetrical 6-Card Bento Metrics Grid (3x2 on desktop, 2x3 on tablet, 1 col on mobile) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
+          {statsData.map((stat) => (
+            <ModernStatCard key={stat.id} stat={stat} trigger={triggered} />
           ))}
         </div>
 
-        {/* Bottom quote */}
-        <div
-          style={{
-            marginTop: 'clamp(2rem, 4vw, 3.5rem)',
-            textAlign: 'center',
-            padding: '1.5rem',
-            borderTop: '1px solid rgba(234,88,12,0.12)',
-          }}
-        >
-          <p
-            style={{
-              fontFamily: 'Playfair Display, Georgia, serif',
-              fontStyle: 'italic',
-              fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)',
-              color: '#475569',
-              maxWidth: '600px',
-              margin: '0 auto',
-              lineHeight: 1.7,
-            }}
-          >
-            "Shaping minds, building careers, and inspiring generations since 1965."
-          </p>
-          <div style={{ marginTop: '0.75rem', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#ea580c' }}>
-            Hindi Mahavidyalaya, Hyderabad
+        {/* Bottom Commemorative Trust Bar */}
+        <div className="mt-8 sm:mt-10 max-w-4xl mx-auto px-4">
+          <div className="rounded-2xl bg-gradient-to-r from-orange-50/70 via-amber-50/40 to-orange-50/70 border border-orange-200/60 p-5 sm:p-6 text-center shadow-xs">
+            <p
+              className="text-slate-700 italic text-sm sm:text-base leading-relaxed max-w-2xl mx-auto"
+              style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
+            >
+              &ldquo;Shaping minds, building careers, and inspiring generations since 1965.&rdquo;
+            </p>
+            <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-[11px] font-bold tracking-wider uppercase text-slate-500">
+              <span className="text-[#ea580c]">Hindi Mahavidyalaya</span>
+              <span className="text-slate-300">•</span>
+              <span>Estd. 1965</span>
+              <span className="text-slate-300">•</span>
+              <span>NAAC Accredited</span>
+              <span className="text-slate-300">•</span>
+              <span>Autonomous Institution</span>
+              <span className="text-slate-300">•</span>
+              <span>Affiliated to Osmania University</span>
+            </div>
           </div>
         </div>
       </div>
